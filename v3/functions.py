@@ -1,10 +1,10 @@
 from flask import render_template, redirect, request, url_for, session, flash
 import csv
-import pandas as pd
-import rpy2.robjects as robjects
-from rpy2.robjects.packages import importr
-from rpy2.robjects import pandas2ri
-from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
+# import pandas as pd
+# import rpy2.robjects as robjects
+# from rpy2.robjects.packages import importr
+# from rpy2.robjects import pandas2ri
+# from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
 
 class FunctionsV3():
     def animate(self):
@@ -43,26 +43,27 @@ class FunctionsV3():
 
 # TODO: implement new graphing method here
             print('Calculating result1 . . .')
-            # reads the 'feature_graph_v4.R' file and stores the information into 'string'
-            with open('/Users/kunalsamant/Documents/UTA/ITLab/COVID-19 visualisation/v3/feature_graph_v4.R', 'r') as f:
-                string = f.read()
-            print(string)
 
-            compute = STAP(string, "main") # stores the information for the 'main' function in 'feature_graph_v4.R' in variable 'main'
+            # # reads the 'feature_graph_v4.R' file and stores the information into 'string'
+            # with open('/Users/kunalsamant/Documents/UTA/ITLab/COVID-19 visualisation/v3/feature_graph_v4.R', 'r') as f:
+            #     string = f.read()
+            # print(string)
 
-            result1 = compute.main(stateList, feature1, feature2) # calls the 'main' function with appropriate arguments | compute.main() ==> variable.function_name()
+            # compute = STAP(string, "main") # stores the information for the 'main' function in 'feature_graph_v4.R' in variable 'main'
+
+            # result1 = compute.main(stateList, feature1, feature2) # calls the 'main' function with appropriate arguments | compute.main() ==> variable.function_name()
 
 
             print('Calculating result2. . .')
-            # reads the 'user_states_graph_fix.R' file and stores the information into 'string'
-            with open('/Users/kunalsamant/Documents/UTA/ITLab/COVID-19 visualisation/v3/user_states_graph_fix.R', 'r') as f:
-                string = f.read()
+            # # reads the 'user_states_graph_fix.R' file and stores the information into 'string'
+            # with open('/Users/kunalsamant/Documents/UTA/ITLab/COVID-19 visualisation/v3/user_states_graph_fix.R', 'r') as f:
+            #     string = f.read()
             
-            display = STAP(string, "display") # stores the information for the 'main' function in ''user_states_graph_fix.R' in variable 'display'
+            # display = STAP(string, "display") # stores the information for the 'main' function in ''user_states_graph_fix.R' in variable 'display'
 
-            result2 = display.main(features[feature1], features[feature2]) # calls the 'main' function with appropriate arguments | display.main() ==> variable.function_name()
+            # result2 = display.main(features[feature1], features[feature2]) # calls the 'main' function with appropriate arguments | display.main() ==> variable.function_name()
             
-            statePreview = ', '.join(stateList) # creates a string of all the state names joined together with a ', ' to display
+            # statePreview = ', '.join(stateList) # creates a string of all the state names joined together with a ', ' to display
             
             
             # stateData = load_states_data(abbrList)
@@ -73,10 +74,10 @@ class FunctionsV3():
             features: features, 
             stateData: stateData,
             link: 'active', 
-            statePreview: statePreview,
+            statePreview: 'statePreview', #statePreview,
             f1: feature1,
             f2: feature2,
-            stateList: stateList
+            stateList: ['state1', 'state2']
         }
 
     
@@ -85,9 +86,8 @@ class FunctionsV3():
     # RETURNS {state name: state abbreviation} for all states
     def load_states(self):
         states_names = {} # initialize the dict
-
         # reads 'states.csv'
-        with open("global_cowiz/static/web-images/timeline-v3/csv/states.csv") as states:
+        with open("static/web-images/timeline-v3/csv/states.csv") as states:
             states_map = csv.reader(states, delimiter=',') # parses 'states.csv'
 
             # loops over each state info to remove first line
@@ -104,7 +104,7 @@ class FunctionsV3():
         features_names = {} # initialize the dict
 
         # reads 'features.csv'
-        with open('global_cowiz/static/web-images/timeline-v3/csv/features.csv') as fp:
+        with open('static/web-images/timeline-v3/csv/features.csv') as fp:
             features = csv.reader(fp, delimiter=',') # parses 'features.csv'
 
             # loops over each feature info

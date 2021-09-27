@@ -7,7 +7,6 @@ from . import app
 from .v2.functions import FunctionsV2
 from .v3.functions import FunctionsV3
 
-
 @app.route("/")
 def index():
     return render_template("home_page.html")

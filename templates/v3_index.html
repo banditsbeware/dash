@@ -182,15 +182,9 @@
                         <div class="dropdown-menu" style="overflow-y:scroll; height: 500spx">
                             <!--enter state information here as a dropdown-->
                             {% for state in states.keys() %}
-                            <!-- {% if state in stateList %}
-
-                            <input id ="{{state}}" name="{{state}}" class="m-1 " type="checkbox" value="{{state}}" onclick="countStates(id, value); enableSubmit(id);" checked>{{state}}<br/>
-
-                            {% else %} -->
 
                             <input id ="{{state}}" name="{{state}}" class="m-1 " type="checkbox" value="{{state}}" onclick="countStates(id, value); enableSubmit(id);">{{state}}<br/>
 
-                            <!-- {% endif %} -->
                             {% endfor %}
 
                         </div>
@@ -242,19 +236,20 @@
             
             <!-- Insert Iframe here  -->
             {% if link %}
-
-            <div class="iframe" style="">
-                <iframe src="{{ url_for('static', filename='web-images/timeline-v3/animations/graphtest_final.html') }}" width="100%;" class="responsive-iframe" allowfullscreen></iframe>
-            </div>
-
+            <div class="iframe">
+                <iframe src="{{ url_for('static', filename='web-images/timeline-v3/animations/graphtest_final.html') }}" width="100%;" class="responsive-iframe" allowfullscreen></iframe></div>
             {% else %}
-
-            <div class="iframe-default" style="">
-                <iframe src="{{ url_for('static', filename='web-images/timeline-v3/animations/workshop_graph.html') }}" width="100%;" class="responsive-iframe" allowfullscreen></iframe>
-            </div>
-
+            <div class="iframe-default">
+                <iframe src="{{ url_for('static', filename='web-images/timeline-v3/animations/workshop_graph.html') }}" width="100%;" class="responsive-iframe" allowfullscreen></iframe></div>
             {% endif %}
             <!------------------------->
+
+            <!-- replace the above iframe element with graph -->
+            <!-- geral is here to help -->
+            <script src="{{ url_for('static', filename='graph.js') }}"></script>
+            <script>
+              gerald();
+            </script>
             
    
         </main> 
