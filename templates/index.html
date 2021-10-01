@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ZHW5H95M1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-2ZHW5H95M1');
+        </script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="COVID-19 Data Analysis and Visualization using Multilayer Networks at the Information Technology Lab in the Department of Computer Science and Engineering at The University of Texas at Arlington">
+        <meta name="author" content="Information Technology Laboratory (ITLab) at UT Arlington">
+        <meta name="generator" content="Jekyll v4.1.1">
+        <title> COVID-19 Data Analytics | ITLab </title>
+
+        <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/cover/">
+
+        <!-- Bootstrap core CSS -->
+
+        <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon" />
+            <!-- Favicons -->
+        <link rel="apple-touch-icon" href="/docs/4.5/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+        <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+        <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+        <link rel="mask-icon" href="/docs/4.5/assets/img/favicons/safari-pinned-tab.svg" color="#563d7c">
+        <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon.ico">
+        <meta name="msapplication-config" content="/docs/4.5/assets/img/favicons/browserconfig.xml">
+        <meta name="theme-color" content="#563d7c">
+       
+        <!-- CSS and JS from Bootstrap required  -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+       <!------------------------------------------>
+
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      
+
+
+        <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+            font-size: 3.5rem;
+            }
+        }
+        .img-height-auto{
+            height: auto;
+        }
+
+        .bootstrap-select .bs-ok-default::after {
+            width: 0.3em;
+            height: 0.6em;
+            border-width: 0 0.1em 0.1em 0;
+            transform: rotate(45deg) translateY(0.5rem);
+        }
+
+        .btn.dropdown-toggle:focus {
+            outline: none !important;
+        }
+        
+        </style>
+        <script type='text/javascript'>
+            var queue = [];
+            function countStates(id){
+                //write the function to ensure only 5 states can be select at max
+
+            }
+
+            function enableSubmit(id){
+                // submit button can only be enabled if appropriate info is provided
+                
+            }
+        </script>
+
+        <!-- Custom styles for this template -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+        <!-- CSS only -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link href="heroes.css" rel="stylesheet">
+        <!-- JS, Popper.js, and jQuery -->
+        
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+ 
+ 
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    </head>
+
+    <body class="text-center" onload="set_max_date(); enable_2nd_calander();">
+        <header class="bg-white" style="margin-top: 5px; margin-bottom: 5px;">
+            <a href="https://www.uta.edu" target="_blank"><img id="uta_logo" src="{{url_for('static', filename='web-images/homepage/uta-logo-v5.png')}}" class="rounded float-left" style="margin-left: 15px;"></a>
+            <a href="https://itlab.uta.edu/" target="_blank"><img id="itlab_logo" src="{{url_for('static', filename='web-images/homepage/itlab-logo-v3.png')}}" class="rounded float-right" style="margin-right: 15px;"></a>
+            <a href="/"><img id="center" src="{{url_for('static', filename='web-images/homepage/banner-home-v2.png')}}" class="rounded mx-auto d-block img-height-auto"></a>
+        </header>
+        
+        <main class="container-fluid" style="width: 100%; font-size:1.2vw">
+			
+            <div class="" style="width:100%; ">
+				
+				<div class="border border-dark text-light container-fluid float-left" style="margin-top: 0; width: 18.5%; height: 2.3vw; border-radius: 0px; background-color:#008DC9;">
+					<p style="margin-top:0.15vw"><strong>CDC</strong> Update</p>
+				</div>
+				
+				<div class="border border-dark float-right container-fluid" style="margin-top: 0; width: 81.5%; height: 2.3vw; border-radius: 0px;">
+					<marquee scrolldelay="10"> 
+						<span id="stateData" style="color:#ED7D31;"><strong>{{stateData}}</strong></span> 
+					</marquee>
+				</div>
+            </div>
+
+            <div class="px-4 py-5 my-5 text-center container-fluid">
+                <!-- <img class="d-block mx-auto mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
+                <div class=" mx-auto text-center">
+                  <p class="lead mb-4">Covid Wizard, or CoWiz, is a dashboard for visualizing base and analyzed Covid-19 US-specific data based on Multilayer Network (MLN) analysis underneath. 
+                      Online dashboards typically plot/visualize statistical information gleaned from base data, such as daily cases, deaths, vaccinations, tests, etc. For a better 
+                      understanding, CoWiz provides an interactive and flexible platform for checking the correlation between features, performing aggregate analysis and its visualization. 
+                      CoWiz utilizes community and other concepts over MLNs that are inferred from Covid and other relevant data sets for visualization. This demo presents flexible, interactive 
+                      dashboards that are capable of visualizing various aspects of Covid-19 data, including the composition of Covid data with demographics (population density, education level,
+                       average earning, vehicle movements, and change in purchase patterns) at the granularity of county for the U.S. As new data become available, they can be incorporated into the
+                        visualization with no manual intervention. </p>
+                </div>
+            </div>
+            
+            <div class="b-example-divider"></div>
+
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+
+                    <div class="col">
+                        <a href="{{url_for('graph')}}" class="text-decoration-none">
+                        <div class="card h-100">
+                        <img src="{{url_for('static', filename='web-images/homepage/animimg.png')}}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <!-- <h5 class="card-title">Cowiz++</h5> -->
+                            <p class="card-text">Animated Timeline for Feature Correlation: Understand the dependence among features (mobility in grocery stores vs. number of cases, 
+                                number of vaccinations vs. number of trips, …) for US states in the pandemic period through animated timeline plots. </p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">extra info</small>
+                        </div>
+                        </div>
+                        </a>
+                    </div>
+                
+
+                
+                    <div class="col" >
+                        <a href="{{url_for('usmap')}}" class="text-decoration-none">
+                        <div class="card h-100">
+                            <img src="{{url_for('static', filename='web-images/homepage/cowizimg.png')}}" class="card-img-top" alt="..."/>
+                            <div class="card-body">
+                                <!-- <h5 class="card-title">CoWiz</h5> -->
+                                <p class="card-text">Interactive Map Visualization using MLNs: Visualize geographical regions with similar rise and decline in daily confirmed cases shift in the 
+                                    periods pre and post an event of interest (lockdown, vaccination drive, spring break, …) through interactive maps. </p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="https://www.youtube.com/watch?v=4vJ56FYBSCg" class="text-center">
+                                    <i class='fas fa-paperclip' style='font-size:24px'></i>
+                                </a>
+                                <a href="https://www.youtube.com/watch?v=4vJ56FYBSCg" class="text-center">
+                                    <i class="fa fa-youtube-play" style="font-size:48px;color:red"></i>
+                                </a>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+               
+
+            </div>
+   
+        </main> 
+        <br/>
+	<div class='container-fluid' style="margin-top:2vw; margin-bottom: 1vw; height:40px; font-size:1.2vw">
+                <!-- <div class="  card float-left"> -->
+
+                
+                    <div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 13%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:15px">
+                        <p style="margin-top:0.15vw">Data Sources</p>
+                    </div>
+                    <div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
+                        <a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/sources/datasource-bts.png') }}" height="30px" style=""></a>
+                    </div>
+                    <div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
+                        <a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/sources/datasource-cdc.png') }}" height="30px" style=""></a>
+                    </div>
+                    <div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
+                        <a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/sources/datasource-google.png') }}" height="30px" style=""></a>
+                    </div>
+                    <div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
+                        <a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/sources/datasource-owid.png') }}" height="30px" style=""></a>
+                    </div>
+                    <div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 12%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:-20px">
+                        <p style="margin-top:0.15vw">Funding Sources</p>
+                    </div>
+    
+                    <div class="container-fluid float-left" style="width: 6%;  height: 2.2vw; border-radius: 0px;">		
+                        <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1955798&HistoricalAwards=false" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/nsf-logo-v2.png') }}" height="40px" style="margin-top:-5px; margin-left:-20px"></a>
+                    </div>
+                    
+                    <div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 12%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:10px">
+                        <p style="margin-top:0.15vw">Visitor Count</p>
+                    </div>
+
+                    <div class="container-fluid float-left" style="width: 6%;  height: 2.2vw; border-radius: 0px;">		
+                        <!-- Start of WebFreeCounter Code -->
+                        <a href="https://www.webfreecounter.com/" target="_blank"><img src="https://www.webfreecounter.com/hit.php?id=gfccca&nd=6&style=31" border="0" alt="hit counter"></a>
+                        <!-- End of WebFreeCounter Code -->
+                    </div>
+
+                <div class="card container-fluid float-left" style="width: 11%;  height: 2.3vw; border-radius: 0px; border-color: #FFFFFF; margin-left:100px; margin-top:-5px">
+                    <button type="button" class="btn btn-info" onclick="window.open('mailto:itlab.cse.uta@gmail.com')">Feedback</button>
+                </div>
+
+                    
+    </div>
+        <hr class="" color="black" style="height: 0px; margin-bottom: 0; margin-top: 0vw;"/>
+        
+        <div style="background-color:#002463;" class=" p-2 container-fluid" style="font-size:1.1vw">
+            <p class="float-left text-light"><a href="https://www.linkedin.com/in/abhishek-santra/" target="_blank"  style="color:white">Abhishek Santra</a> | <a href="https://linkedin.com/in/kunalsamant" target="_blank"  style="color:white">Kunal Samant</a> | <a href="https://www.linkedin.com/in/enamul17/" target="_blank"  style="color:white">Enamul Karim</a> | <a href="https://www.linkedin.com/in/endrit-m/" target="_blank"  style="color:white">Endrit Memeti</a> | <a href="http://itlab.uta.edu/index.html" target="_blank"  style="color:white">Sharma Chakravarthy</a> | <a href="mailto:itlab.cse.uta@gmail.com" target="_blank"><img src="{{url_for('static', filename='imgs/images/email.png')}}" height=17px></a></p>
+            <p class="float-right text-light">
+			&copy; 2021 The University of Texas at Arlington </p>
+            <br/>
+        </div>
+		<div align="center" hidden="hidden">
+		 <button type="button" name="load_data" id="load_data" hidden="hidden" class="btn btn-info">Load Data</button>
+		</div>
+    </body>
+</html>
+
+<script>
+$(document).ready(function(){
+$(function() {
+    $('#load_data').click();
+});
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+var xhReq = new XMLHttpRequest();
+xhReq.open("HEAD", "static/WHO/WHO-COVID-19-global-data.csv", false);
+xhReq.send(null);
+var lastModified = xhReq.getResponseHeader("Last-Modified");
+
+
+var d = new Date();
+var month = d.getMonth()+1;
+var pday = d.getDate()-1;
+var day = d.getDate();
+var date = d.getFullYear() + '-' +
+    (month<10 ? '0' : '') + month + '-' +
+    (day<10 ? '0' : '') + day;
+ 
+	
+ $('#load_data').click(function(){
+  
+  $.ajax({   
+   url:"static/WHO/WHO-COVID-19-global-data.csv",
+   dataType:"text",
+   success:function(data)
+   {
+   var globalCase=0, globalDeath=0, USCases=0, USDeaths=0;
+   var covid_data = data.split(/\r?\n|\r/);
+
+    // ASantra (1/3/21): Modified by Adding only the NEW_CASES and NEW_DEATHS
+   for(var count = 1; count<covid_data.length-1; count++)
+    {
+         var cell_data = covid_data[count].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+         cell_data = cell_data || [];
+		 if(cell_data[1]=="US"){
+		     USCases=USCases+parseInt(cell_data[4]);
+		     USDeaths=USDeaths+parseInt(cell_data[6]);
+		   }
+		   globalCase=globalCase+parseInt(cell_data[4]);
+		   globalDeath=globalDeath+parseInt(cell_data[6]);
+    
+    }
+console.log(globalCase);
+   
+ 
+	$('#WorldCases').html(numberWithCommas(globalCase)+" Cases");
+	$('#WorldDeath').html(numberWithCommas(globalDeath)+" Deaths");
+console.log(USCases);
+	$('#USCases').html(numberWithCommas(USCases)+" Cases");
+	$('#USDeaths').html(numberWithCommas(USDeaths)+" Deaths");
+
+	$('#lastUpdate').html(lastModified+"");
+
+       
+    
+   }
+      
+  });
+ });
+ 
+});
+</script>
+

@@ -4,15 +4,15 @@ import requests
 from datetime import datetime, timedelta
 from flask import Flask
 from . import app
-from .v2.functions import FunctionsV2
+from .usmap.functions import FunctionsV2
 # from .v2 import functions as M
-from .v3 import functions as G
+from .graph import functions as G
 
-@app.route("/")
-def index(): return render_template("home_page.html")
+@app.route('/')
+def index(): return render_template("index.html")
 
-@app.route("/v2")
-def v2():
+@app.route("/usmap")
+def usmap():
 
     # data structure will be used further on for input
     intervals = [ i for i in range(31) ]
@@ -29,7 +29,7 @@ def v2():
         7: 'Spike',
         8: 'All',
     }
-    return render_template("v2_index.html",
+    return render_template("usmap.html",
             message    = '',
             intervals  = intervals,
             rates      = rates,
@@ -39,7 +39,7 @@ def v2():
             start      = '',
             end        = '')
 
-@app.route("/v2/map",  methods=['GET','POST'])
+@app.route("/usmap/map",  methods=['GET','POST'])
 def map():
     functions = FunctionsV2()
     data = functions.map()
@@ -52,23 +52,16 @@ def map():
             start      = data['start'],
             end        = data['end'])
 
-@app.route("/v3")
-def v3():
-    states   = G.load_states()
-    features = G.load_features()
-    return render_template("v3_index.html",
-            states   = states,
-            features = features)
+@app.route("/graph")
+def graph():
+    return render_template("graph.html",
+            states   = G.load_regions(),
+            features = G.load_features())
 
-@app.route("/v3/animate", methods=['GET','POST'])
+@app.route("/graph/animate", methods=['POST'])
 def animate():
     data = G.graph_data()
-    return render_template("v3_index.html",
-            states       = data['states'],
-            features     = data['features'],
-            stateData    = data['stateData'],
-            link         = data['link'],
-            statePreview = data['statePreview'],
-            f1           = data['f1'],
-            f2           = data['f2'],
-            stateList    = data['stateList'])
+    return render_template("graph.html",
+            regions   = G.load_regions(),
+            features  = G.load_features(),
+            data      = G.graph_data())
