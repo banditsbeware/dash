@@ -8,6 +8,8 @@ from .usmap.functions import FunctionsV2
 # from .v2 import functions as M
 from .graph import functions as G
 
+import json
+
 @app.route('/')
 def index(): return render_template("index.html")
 
@@ -55,13 +57,12 @@ def map():
 @app.route("/graph")
 def graph():
     return render_template("graph.html",
-            states   = G.load_regions(),
+            regions  = G.load_regions(),
             features = G.load_features())
 
 @app.route("/graph/animate", methods=['POST'])
 def animate():
-    data = G.graph_data()
     return render_template("graph.html",
             regions   = G.load_regions(),
             features  = G.load_features(),
-            data      = G.graph_data())
+            data      = json.dumps(G.graph_data()))

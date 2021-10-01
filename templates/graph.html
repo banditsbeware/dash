@@ -96,35 +96,6 @@
         }
         
         </style>
-        <script type='text/javascript'>
-            var queue = [];
-            var abbr = [];
-            function countStates(id, value){
-                if (document.getElementById(id).checked == false){
-                    queue.splice(queue.indexOf(id), 1);
-                    abbr.splice(abbr.indexOf(value), 1);
-                }
-                else{
-                    queue.push(id);
-                    abbr.push(value);
-                }
-                if (queue.length==6){
-                    document.getElementById(queue[0]).checked = false;
-                    queue.shift();
-                    abbr.shift();
-                }
-                document.getElementById('stateList').value = queue.join(', ');
-                // console.log(abbr);
-            }
-
-            function enableSubmit(id){
-                if (document.getElementById('feature1').value != 'Select Feature' && 
-                document.getElementById('feature2').value != 'Select Feature' &&
-                queue.length != 0){
-                    document.getElementById('submit').disabled = false;
-                }
-            }
-        </script>
 
         <!-- Custom styles for this template -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -162,72 +133,72 @@
 				</div>
 				
 				<div class="border border-dark float-right container-fluid" style="margin-top: 0; width: 81.5%; height: 2.3vw; border-radius: 0px;">
-					<marquee scrolldelay="10"> 
-						<span id="stateData" style="color:#ED7D31;"><strong>state data</strong></span> 
-					</marquee>
+					<marquee scrolldelay="20"> <span id="stateData"><code>¯\(°_o)/¯</code></span> </marquee>
 				</div>
-            </div>
+      </div>
 
-            <!-----------------------Edit the input bar here -------------------------------->
+            {% if data %}
+
+            <style>
+              div.lift {
+                border: 1px solid rgb(71, 71, 71);
+                box-shadow: 3px 3px 3px 3px gray;
+              }
+            </style>
+
+            <a href='/graph'>New Query</a>
+            <div id='dash'></div>
+            <script src="{{ url_for('static', filename='graph.js') }}"></script>
+            <script type='text/javascript'>
+
+              let data = JSON.parse('{{ data|safe }}');
+
+              let dash = new Dash('dash', 500, 500, 15);
+
+              for (let region in data) {
+                let x = [], r = data[region];
+
+                for (let i=0; i<r.t.length; i++) x.push(i);
+                console.log(r.f1, r.f2);
+                dash.push(DataSet(x, r.f1, 1));
+                dash.push(DataSet(x, r.f2, 2));
+              }
+
+            </script>
+
+            {% else %}
+
             <div class="container-fluid ">
                 <div class="card-deck bg-secondary p-3">
-                    <form class="container-fluid" action="graph/animate" method="POST" novalidate>
+                    <form class="container-fluid" action="/graph/animate" method="POST" novalidate>
                         <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Select regions...  </button>
                         <div class="dropdown-menu" style='max-height: 400px; overflow-y: scroll'>
 
-                            {% for state in states %}
-
-                            <input id="{{state}}" name="{{state}}" class="m-1" type="checkbox" value="{{state}}" onclick="countStates(id, value); enableSubmit(id);">{{state}}<br> 
-
+                            {% for r in regions %}
+                            <input id="{{ r }}" name="{{ r }}" class="m-1" type="checkbox" value="{{ r }}" onclick="countStates(id, value); enableSubmit(id);">{{ r }}<br> 
                             {% endfor %}
 
-                        </div>
+                        </div><br>
                         
-                        <input id="stateList" class="card btn btn-white m-2" type="text" value="{{statePreview}}" size="60" disabled/>
-                                                  
-
                         <select id="feature1" class="card btn btn-light m-2" name="feature1" onchange="enableSubmit(id);">
-                            <!--enter feature 1 information here-->
-                            {% for feature in features %}
-                            <option id = '{{feature}}' value = '{{feature}}'>{{features[feature]}}</option>
+                            {% for f in features %}
+                            <option id = '{{ f }}' value = '{{ f }}'>{{ features[f] }}</option>
                             {% endfor %}
                         </select>
 
                         <select id="feature2" class="card btn btn-light m-2" name="feature2" onchange="enableSubmit(id);">
-                            <!--enter feature 2 information here-->
-
-                            {% for feature in features %}
-                            <option id = '{{feature}}' value = '{{feature}}'>{{features[feature]}}</option>
+                            {% for f in features %}
+                            <option id='{{ f }}' value='{{ f }}'>{{ features[f] }}</option>
                             {% endfor %}
 
                         </select>
                         
-                        <!-- add a submit button here-->
-                        <input id="submit" class="btn btn-light m-2" type="submit" value ="Submit" disabled>
-                        <!----------------------------->
+                        <input id="submit" class="btn btn-light m-2" type="submit" value ="Submit">
                     </form>
                 </div>
             </div>
-            <!-------------------------------------------------------------------------->
-        
-        
-            
-            <!-- Insert Iframe here  -->
-            {% if link %}
-            <div class="iframe">
-                <iframe src="{{ url_for('static', filename='web-images/timeline-v3/animations/graphtest_final.html') }}" width="100%;" class="responsive-iframe" allowfullscreen></iframe></div>
-            {% else %}
-            <div class="iframe-default">
-                <iframe src="{{ url_for('static', filename='web-images/timeline-v3/animations/workshop_graph.html') }}" width="100%;" class="responsive-iframe" allowfullscreen></iframe></div>
-            {% endif %}
-            <!------------------------->
 
-            <!-- replace the above iframe element with graph -->
-            <!-- geral is here to help -->
-            <script src="{{ url_for('static', filename='graph.js') }}"></script>
-            <script>
-              gerald();
-            </script>
+            {% endif %}
             
    
         </main> 

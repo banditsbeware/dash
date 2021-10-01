@@ -9,15 +9,15 @@ datapath = 'static/example_data.csv'
 # Expects regions to be listed in the leftmost column
 # Returns a list of strings
 def load_regions():
-  states = set() 
+  regions = set() 
 
   with open(datapath, 'r') as f:
     l = f.readline().split(',')[0]
     while l:
-      states.add(l)
+      regions.add(l)
       l = f.readline().split(',')[0]
 
-  return sorted(list(states))
+  return sorted(list(regions))
 
 
 # Read first line of data file and return a disctionary of available features
@@ -56,23 +56,18 @@ def get_curves(regions, f1, f2):
       C[region]['t' ].append(l[1]) # date
       C[region]['f1'].append(float(l[f1])) # feature 1 data point
       C[region]['f2'].append(float(l[f2])) # feature 2 data point
+      # TODO: check for empty values!! this causes a crash!
 
   return C
 
 # read input form and return data to be graphed
 def graph_data():
 
-  # load the states.csv file into this dict variable | format: {state: abbreviation}
-  regions = load_regions()
-
-  # loads the feature in to this dict variable | format: {feature id: feature name}
-  features = load_features()
-
   # initialize stateList as an empty list; will contain the states (full name)
-  # which the user(s) selected to view
+  # which the user selected to view
   selected_regions = list()
 
-  # called if function called with POST API
+  # function called with POST API
   if request.method == "POST":
 
     ipt = request.form
@@ -80,7 +75,7 @@ def graph_data():
     for field in ipt:
       if field not in ['feature1', 'feature2']: selected_regions.append(ipt[field])
 
-    feature1 = int(ipt['feature1']) # feature1 contains feature1 info | format: {feature id: feature name}
-    feature2 = int(ipt['feature2']) # feature2 contains feature2 info | format: {feature id: feature name}
+    feature1 = int(ipt['feature1'])
+    feature2 = int(ipt['feature2'])
 
   return get_curves(selected_regions, feature1, feature2)    
