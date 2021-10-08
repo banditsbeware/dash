@@ -1,4 +1,5 @@
 # Packages required for all versions of the project
+from os import path
 from flask import render_template, redirect, request, url_for, session, flash
 import requests
 from datetime import datetime, timedelta
@@ -45,14 +46,15 @@ def usmap():
 def map():
     functions = FunctionsV2()
     data = functions.map()
-    return render_template("v2_index.html",
+    return render_template("usmap.html",
             intervals  = data['intervals'],
-            rates      = data['rate'],
+            rates      = data['rates'],
             filepath   = data['filepath'],
             highlights = data['highlights'],
             ipt        = data['ipt'],
             start      = data['start'],
-            end        = data['end'])
+            end        = data['end'],
+            check      = data['check'])
 
 @app.route("/graph")
 def graph():
