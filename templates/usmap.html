@@ -387,7 +387,7 @@
                             <div class="container-fluid">
 
                                     {% if not ipt %}
-                                    <form action = "usmap/map" method = "POST" novalidate>
+                                    <form action = "/usmap" method = "POST" novalidate>
                                         
                                         <select style="background-color:#BECFEB;" data-toggle="tooltip" data-placement="top" data_html = "true" title="Select the length (in number of days) for the periods to be analyzed" class=" m-2 btn btn-light" id="periodLength" name="periodLength" size="1" onchange="toBorderDark(id); adjust_min_of_2nd_period(); enable_2nd_calander(); enableSubmit(); enable_1st_calander(); set_max_date();">
 
@@ -437,7 +437,7 @@
 
                                     {% else %}
                                     
-                                    <form action = "usmap/map" method = "POST" novalidate>
+                                    <form action = "/usmap" method = "POST" novalidate>
                                         
                                         <select style="background-color:#BECFEB;" data-toggle="tooltip"data-placement="top" title="Select the length (in number of days) for the periods to be analyzed" class=" m-2  btn btn-light {% if check['period'] == 0 %} border-danger {% endif %}" id="periodLength" name="periodLength" size="1" onchange="toBorderDark(id); resetDates(id); adjust_min_of_2nd_period(); enable_2nd_calander(); enableSubmit(); enable_1st_calander(); set_max_date(); setEnd(id);">
 
@@ -499,7 +499,7 @@
                 </div>
                 {% else %}
                 <div class="embed-responsive embed-responsive-21by9 text-center m-1 " style="width: 81.5%; position: relative;">
-                    <iframe id="iframe" src="{{ url_for('static', filename='web-images/map-v2/maps/default.html') }}" width="100%;" class="embed-responsive-item" allowfullscreen></iframe>
+                    <iframe id="iframe" src="{{ url_for('static', filename='maps/default.html') }}" width="100%;" class="embed-responsive-item" allowfullscreen></iframe>
                 </div>
                 {% endif %}
 
