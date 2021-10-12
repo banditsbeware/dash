@@ -1,4 +1,5 @@
-import datetime
+#!/usr/bin/python3.6
+from datetime import datetime
 from pynytimes import NYTAPI
 class ArticleSearch:
 
@@ -23,8 +24,8 @@ class ArticleSearch:
             dates = {
                 #"begin": datetime.datetime(2020, 6, 24),
                 #"end": datetime.datetime(2020, 6, 27)
-                "begin": datetime.datetime.strptime(startDate,'%Y-%m-%d %H:%M:%S'),
-                "end": datetime.datetime.strptime(endDate,'%Y-%m-%d %H:%M:%S')
+                "begin": datetime.strptime(startDate,'%Y-%m-%d %H:%M:%S'),
+                "end": datetime.strptime(endDate,'%Y-%m-%d %H:%M:%S')
             },
             options = {
                 "sort": "relevance",
@@ -40,7 +41,10 @@ class ArticleSearch:
                 ]
             }
         )
+        sorted_articles = sorted(articles, key=lambda x: datetime.strptime(x['pub_date'][0:10], '%Y-%m-%d'), reverse=True)
+        for x in range(len(sorted_articles)):
+          sorted_articles[x]['pub_date']=datetime.strptime(sorted_articles[x]['pub_date'][0:10], '%Y-%m-%d').strftime('%d-%b-%Y')
+        return sorted_articles
         
-        return articles
     #results= search('2020-6-25', '2020-6-26')
     #printArticles(results)
