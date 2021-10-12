@@ -1,0 +1,17 @@
+Select Feature,Select Feature
+new_case,New Cases
+new_death,New Deaths
+daily_vaccinations,New Vaccinations
+daily_vaccinations_per_million,New Vaccinations / Million
+previous_day_admission_adult_covid_confirmed,New Adult Hospitalizations
+previous_day_admission_pediatric_covid_confirmed,New Pediatric Hospitalizations
+new_tests,New Tests
+NumberofTrips,New Trips
+Population_Staying_at_Home,Population at Home
+Number_of_Trips_500miles,New 500 mile Trips
+retail_and_recreation_percent_change_from_baseline,Mobility %Change: Retail/Recreation
+grocery_and_pharmacy_percent_change_from_baseline,Mobility %Change: Grocery and Pharmacy
+parks_percent_change_from_baseline,Mobility %Change: Parks
+transit_stations_percent_change_from_baseline,Mobility %Change: Transit Stations
+workplaces_percent_change_from_baseline,Mobility %Change: Workplaces
+residential_percent_change_from_baseline,Mobility %Change: Residential Areas
