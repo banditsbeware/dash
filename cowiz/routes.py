@@ -1,15 +1,7 @@
-# Packages required for all versions of the project
-from os import path
-from flask import render_template, redirect, request, url_for, session, flash
-import requests
-from datetime import datetime, timedelta
-from flask import Flask
-from . import app
-from .usmap.functions import FunctionsV2
-# from .v2 import functions as M
-from .graph import functions as G
-
-import json
+from flask import render_template
+from cowiz import app
+from cowiz.usmap.functions import FunctionsV2
+from cowiz.graph import functions as G
 
 @app.route('/')
 def index(): return render_template("index.html")
@@ -62,9 +54,10 @@ def graph():
             regions  = G.load_regions(),
             features = G.load_features())
 
+from json import dumps
 @app.route("/graph/animate", methods=['POST'])
 def animate():
     return render_template("graph.html",
             regions   = G.load_regions(),
             features  = G.load_features(),
-            data      = json.dumps(G.graph_data()))
+            data      = dumps(G.graph_data()))

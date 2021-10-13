@@ -1,8 +1,10 @@
-from flask import request
+from flask import request, current_app
+from cowiz import app
 
 # Abhishek's data file
 # TODO: update regularly from journalistic source
-datapath = 'static/example_data.csv'
+with app.app_context():
+  datapath = current_app.config['DATAPATH']
 
 
 # Read the set of unique regions from data file
@@ -20,12 +22,12 @@ def load_regions():
   return sorted(list(regions))
 
 
-# Read first line of data file and return a disctionary of available features
+# Read first line of data file and return a dictionary of available features
 # Returns a dict { ID: name }
 def load_features():
   with open(datapath, 'r') as f: header = f.readline()[:-1]
   L = [W.replace('_', ' ').title() for W in header.split(',')]
-  return dict(enumerate(L))
+  return dict(enumerate(L[2:]))
 
 
 # returns a strange data structure! 
@@ -54,8 +56,8 @@ def get_curves(regions, f1, f2):
     l = line.split(','); region = l[0]
     if region in regions:
       C[region]['t' ].append(l[1]) # date
-      C[region]['f1'].append(float(l[f1])) # feature 1 data point
-      C[region]['f2'].append(float(l[f2])) # feature 2 data point
+      C[region]['f1'].append(float(l[f1] or 0)) # feature 1 data point
+      C[region]['f2'].append(float(l[f2] or 0)) # feature 2 data point
       # TODO: check for empty values!! this causes a crash!
 
   return C

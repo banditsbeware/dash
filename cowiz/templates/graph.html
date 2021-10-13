@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+		<head>
+				<!-- Global site tag (gtag.js) - Google Analytics -->
+				<script async src="https://www.googletagmanager.com/gtag/js?id=G-2ZHW5H95M1"></script>
+				<script>
+						window.dataLayer = window.dataLayer || [];
+						function gtag(){dataLayer.push(arguments);}
+						gtag('js', new Date());
+
+						gtag('config', 'G-2ZHW5H95M1');
+				</script>
+				<meta charset="utf-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+				<meta name="description" content="COVID-19 Data Analysis and Visualization using Multilayer Networks at the Information Technology Lab in the Department of Computer Science and Engineering at The University of Texas at Arlington">
+				<meta name="author" content="Information Technology Laboratory (ITLab) at UT Arlington">
+				<meta name="generator" content="Jekyll v4.1.1">
+				<title> COVID-19 Data Analytics | ITLab </title>
+
+				<link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/cover/">
+
+				<!-- Bootstrap core CSS -->
+
+				<link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon" />
+						<!-- Favicons -->
+				<link rel="apple-touch-icon" href="/docs/4.5/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+				<link rel="icon" href="/docs/4.5/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+				<link rel="icon" href="/docs/4.5/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+				<link rel="mask-icon" href="/docs/4.5/assets/img/favicons/safari-pinned-tab.svg" color="#563d7c">
+				<link rel="icon" href="/docs/4.5/assets/img/favicons/favicon.ico">
+				<meta name="msapplication-config" content="/docs/4.5/assets/img/favicons/browserconfig.xml">
+				<meta name="theme-color" content="#563d7c">
+			 
+				<!-- CSS and JS from Bootstrap required  -->
+				<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+				
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+			 <!------------------------------------------>
+
+
+				<style>
+				.bd-placeholder-img {
+						font-size: 1.125rem;
+						text-anchor: middle;
+						-webkit-user-select: none;
+						-moz-user-select: none;
+						-ms-user-select: none;
+						user-select: none;
+				}
+
+				@media (min-width: 768px) {
+						.bd-placeholder-img-lg {
+						font-size: 3.5rem;
+						}
+				}
+				.img-height-auto{
+						height: auto;
+				}
+
+				.bootstrap-select .bs-ok-default::after {
+						width: 0.3em;
+						height: 0.6em;
+						border-width: 0 0.1em 0.1em 0;
+						transform: rotate(45deg) translateY(0.5rem);
+				}
+
+				.btn.dropdown-toggle:focus {
+						outline: none !important;
+				}
+
+				.iframe{
+						position: relative;
+						overflow: hidden;
+						width: 100%;
+						height: 100%;
+						padding-top: 40%;
+				}
+
+				.iframe-default{
+						position: relative;
+						overflow: hidden;
+						width: 100%;
+						height: 100%;
+						padding-top: 31%;
+				}
+
+				.responsive-iframe {
+						position: absolute;
+						top: 0;
+						left: 0;
+						bottom: 0;
+						right: 0;
+						width: 100%;
+						height: 100%;
+				}
+				
+				</style>
+
+				<!-- Custom styles for this template -->
+				<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+				<!-- CSS only -->
+				<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+				<!-- JS, Popper.js, and jQuery -->
+				
+				<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+				<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+				<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+				<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+ 
+ 
+				<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		</head>
+
+		<body class="text-center" onload="set_max_date(); enable_2nd_calander();">
+				<header class="bg-white" style="margin-top: 5px; margin-bottom: 5px;">
+						<a href="https://www.uta.edu" target="_blank"><img id="uta_logo" src="{{ url_for('static', filename='web-images/timeline-v3/uta-logo-v4.png') }}" class="rounded float-left" style="margin-left: 15px;"></a>
+						<a href="https://itlab.uta.edu/" target="_blank"><img id="itlab_logo" src="{{ url_for('static', filename='web-images/timeline-v3/itlab-logo-v3.png') }}" class="rounded float-right" style="margin-right: 15px;"></a>
+						<a href="/"><img id="center" src="{{ url_for('static', filename='web-images/timeline-v3/banner-timeline-v2.png') }}" class="rounded mx-auto d-block img-height-auto"></a>
+				</header>
+				
+				<main class="container-fluid" style="width: 100%; font-size:1.2vw">
+			<div class="" style="width:100%; ">
+				
+				<div class="border border-dark text-light container-fluid float-left" style="margin-top: 0; width: 18.5%; height: 2.3vw; border-radius: 0px; background-color:#008DC9;">
+					<p style="margin-top:0.15vw"><strong>CDC</strong> Update</p>
+				</div>
+				
+				<div class="border border-dark float-right container-fluid" style="margin-top: 0; width: 81.5%; height: 2.3vw; border-radius: 0px;">
+					<marquee scrolldelay="20"> <span id="stateData"><code>feature comparison by region</code></span> </marquee>
+				</div>
+			</div>
+
+						{% if data %}
+
+						<style>
+							div.lift {
+								border: 1px solid rgb(71, 71, 71);
+								box-shadow: 3px 3px 3px 3px gray;
+							}
+						</style>
+
+						<button class='btn btn-info' type='button' onclick='window.open("/graph")' style='margin:25px'>New Query</button>
+						<div id='dash'></div>
+						<script src="{{ url_for('static', filename='graph.js') }}"></script>
+						<script type='text/javascript'>
+
+							let data = JSON.parse('{{ data|safe }}');
+
+							let dash = new Dash('dash', 500, 500, 15);
+
+							for (let region in data) {
+								let x = [], r = data[region];
+
+								for (let i=0; i<r.t.length; i++) x.push(i);
+								console.log(r.f1, r.f2);
+								dash.push(DataSet(x, r.f1, 1));
+								dash.push(DataSet(x, r.f2, 2));
+							}
+
+						</script>
+
+						{% else %}
+
+						<div class="container-fluid ">
+								<div class="card-deck bg-secondary p-3">
+										<form class="container-fluid" action="/graph/animate" method="POST" novalidate>
+												<button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Select regions...  </button>
+												<div class="dropdown-menu" style='max-height: 400px; overflow-y: scroll'>
+
+														{% for r in regions %}
+														<input id="{{ r }}" name="{{ r }}" class="m-1" type="checkbox" value="{{ r }}" onclick="countStates(id, value); enableSubmit(id);">{{ r }}<br> 
+														{% endfor %}
+
+												</div>
+												
+												<select id="feature1" class="card btn btn-light m-2" name="feature1" onchange="enableSubmit(id);">
+														{% for f in features %}
+														<option id = '{{ f }}' value = '{{ f }}'>{{ features[f] }}</option>
+														{% endfor %}
+												</select>
+
+												<select id="feature2" class="card btn btn-light m-2" name="feature2" onchange="enableSubmit(id);">
+														{% for f in features %}
+														<option id='{{ f }}' value='{{ f }}'>{{ features[f] }}</option>
+														{% endfor %}
+
+												</select>
+												
+												<input id="submit" class="btn btn-light m-2" type="submit" value ="Submit">
+										</form>
+								</div>
+						</div>
+
+						{% endif %}
+						
+	 
+				</main> 
+				<br/>
+	<div class='container-fluid' style="margin-top:2vw; margin-bottom: 1vw; height:40px; font-size:1.2vw">
+								
+										<div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 13%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:15px">
+												<p style="margin-top:0.15vw">Data Sources</p>
+										</div>
+										<div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
+												<a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/timeline-v3/sources/datasource-bts.png') }}" height="30px"></a>
+										</div>
+										<div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
+												<a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/timeline-v3/sources/datasource-cdc.png') }}" height="30px"></a>
+										</div>
+										<div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
+												<a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/timeline-v3/sources/datasource-google.png') }}" height="30px"></a>
+										</div>
+										<div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
+												<a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/timeline-v3/sources/datasource-owid.png') }}" height="30px"></a>
+										</div>
+										<div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 12%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:-20px">
+												<p style="margin-top:0.15vw">Funding Sources</p>
+										</div>
+		
+										<div class="container-fluid float-left" style="width: 6%;  height: 2.2vw; border-radius: 0px;">   
+												<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1955798&HistoricalAwards=false" target="_blank"><img src="{{ url_for('static', filename='web-images/timeline-v3/nsf-logo-v2.png') }}" height="40px" style="margin-top:-5px; margin-left:-20px"></a>
+										</div>
+										
+										<div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 12%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:10px">
+												<p style="margin-top:0.15vw">Visitor Count</p>
+										</div>
+
+										<div class="container-fluid float-left" style="width: 6%;  height: 2.2vw; border-radius: 0px;">   
+												<!-- Start of WebFreeCounter Code -->
+												<a href="https://www.webfreecounter.com/" target="_blank"><img src="https://www.webfreecounter.com/hit.php?id=gfccca&nd=6&style=31" border="0" alt="hit counter"></a>
+												<!-- End of WebFreeCounter Code -->
+										</div>
+
+								<div class="card container-fluid float-left" style="width: 11%;  height: 2.3vw; border-radius: 0px; border-color: #FFFFFF; margin-left:100px; margin-top:-5px">
+										<button type="button" class="btn btn-info" onclick="window.open('mailto:itlab.cse.uta@gmail.com')">Feedback</button>
+								</div>
+
+										
+		</div>
+				<hr class="" color="black" style="height: 0px; margin-bottom: 0; margin-top: 0vw;"/>
+				
+				<div style="background-color:#002463;" class=" p-2 container-fluid" style="font-size:1.1vw">
+						<p class="float-left text-light"><a href="https://www.linkedin.com/in/abhishek-santra/" target="_blank"  style="color:white">Abhishek Santra</a> | <a href="https://linkedin.com/in/kunalsamant" target="_blank"  style="color:white">Kunal Samant</a> | <a href="https://www.linkedin.com/in/enamul17/" target="_blank"  style="color:white">Enamul Karim</a> | <a href="https://www.linkedin.com/in/endrit-m/" target="_blank"  style="color:white">Endrit Memeti</a> | <a href="http://itlab.uta.edu/index.html" target="_blank"  style="color:white">Sharma Chakravarthy</a> | <a href="mailto:itlab.cse.uta@gmail.com" target="_blank"><img src="{{url_for('static', filename='imgs/images/email.png')}}" height=17px></a></p>
+						<p class="float-right text-light">
+			&copy; 2021 The University of Texas at Arlington </p>
+						<br/>
+				</div>
+		</body>
+</html>

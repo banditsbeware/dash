@@ -11,7 +11,7 @@ install required packages: <br>
 (in case packages are updated: `$ pip freeze > requirements.txt`)
 
 development: <br>
-`$ export FLASK_APP=__init__.py` (this should change soon) <br>
+`$ export FLASK_APP=cowiz` <br>
 `$ export FLASK_ENV=development`
 
 run: <br>
