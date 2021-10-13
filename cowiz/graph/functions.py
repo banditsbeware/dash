@@ -27,7 +27,7 @@ def load_regions():
 def load_features():
   with open(datapath, 'r') as f: header = f.readline()[:-1]
   L = [W.replace('_', ' ').title() for W in header.split(',')]
-  return dict(enumerate(L[2:]))
+  return dict(enumerate(L))
 
 
 # returns a strange data structure! 

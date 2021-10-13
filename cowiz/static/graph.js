@@ -63,7 +63,8 @@ let Dash = class {
       'box-sizing': 'border-box'
     });
     $(`#${divID} div`).css('position', 'absolute');
-    // $(`#${divID} div::-webkit-scrollbar`).css('display', 'none');
+    $(`#${divID} div`).css('scrollbar-width', 'none');
+    $(`#${divID} div::-webkit-scrollbar`).css('display', 'none');
 
     this.LG = new Graph(`${divID}lg`);
     this.RG = new Graph(`${divID}rg`);
@@ -147,6 +148,9 @@ let Dash = class {
 }
 
 let Bar = class {
+// https://jsfiddle.net/uq2pLufn/3/
+// http://jsfiddle.net/3jMQD/
+
 
   constructor(barID) {
 
@@ -154,28 +158,41 @@ let Bar = class {
 
     // assume both graphs have the same data width
     this.obar = $(`#${barID}`);
-    this.outerWidth = parseInt(this.obar.css('width'));
 
     // create and append inner (draggable) bar
     this.obar.append(`<div id='${barID}-ibar'></div>`);
+    this.obar.css('background-color', '#CCC')
     this.ibar = $(`#${barID}-ibar`);
     this.ibar.css({ 
       'height': `${this.obar.css('height')}`, 
-      'background': 'blue'
+      'position': 'absolute',
+      'background': '#EEEEEE'
     });
-    this.setHandles(3, 'lightblue');
+
+    this.dib = document.getElementById(`${barID}-ibar`);
+    this.dib.onmousedown = this.startDrag;
+    this.x0, this.x;
 
   }
 
-  setHandles(width, color) {
-    this.ibar.css({
-      'border-left': `${width}px solid ${color}`,
-      'border-right': `${width}px solid ${color}`,
-    });
+  startDrag = (e) => {
+    this.x0 = e.clientX;
+    document.onmouseup = this.stopDrag;
+    document.onmousemove = this.doDrag;
   }
 
-  setInnerWidth(w) { this.ibar.css('width', `${w}px`); }
+  doDrag = (e) => {
+    this.x = this.x0 - e.clientX;
+    this.x0 = e.clientX;
+    let d = this.dib.offsetLeft - this.x;
+    if (d >= 0)
+      this.dib.style.left = this.dib.offsetLeft - this.x + "px"
+  }
 
+  stopDrag = (e) => {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
 }
 
 let Graph = class {
