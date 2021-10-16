@@ -56,9 +56,8 @@ def get_curves(regions, f1, f2):
     l = line.split(','); region = l[0]
     if region in regions:
       C[region]['t' ].append(l[1]) # date
-      C[region]['f1'].append(float(l[f1] or 0)) # feature 1 data point
-      C[region]['f2'].append(float(l[f2] or 0)) # feature 2 data point
-      # TODO: check for empty values!! this causes a crash!
+      C[region]['f1'].append(float(l[f1]) if l[f1] else 0) # feature 1 data point
+      C[region]['f2'].append(float(l[f2]) if l[f2] else 0) # feature 2 data point
 
   return C
 

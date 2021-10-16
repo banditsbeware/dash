@@ -50,14 +50,13 @@ def usmap():
 
 @app.route("/graph")
 def graph():
-    return render_template("graph.html",
-            regions  = G.load_regions(),
-            features = G.load_features())
+  # set DATAPATH here depending on whether the user clicked 'US', 'India', etc
+  # ... then graph/functions.py will load the corresponding CSV file
+  return render_template("graph.html",
+          regions  = G.load_regions(),
+          features = G.load_features())
 
 from json import dumps
 @app.route("/graph/animate", methods=['POST'])
 def animate():
-    return render_template("graph.html",
-            regions   = G.load_regions(),
-            features  = G.load_features(),
-            data      = dumps(G.graph_data()))
+    return render_template("graph.html", data = dumps(G.graph_data()))
