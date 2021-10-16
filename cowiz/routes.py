@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request
 from cowiz import app
 from cowiz.usmap.functions import FunctionsV2
 from cowiz.graph import functions as G
