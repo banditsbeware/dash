@@ -2,9 +2,10 @@ from flask import render_template, request
 from cowiz import app
 from cowiz.usmap import functions as U
 from cowiz.graph import functions as G
+from .article import covid_news
 
 @app.route('/')
-def index(): return render_template("index.html")
+def index(): return render_template("index.html", news = covid_news())
 
 @app.route("/usmap", methods=['GET', 'POST'])
 def usmap():
@@ -51,7 +52,10 @@ def usmap():
 def graph():
   # set DATAPATH here depending on whether the user clicked 'US', 'India', etc
   # ... then graph/functions.py will load the corresponding CSV file
+  for x in covid_news()[0]:
+    print(x)
   return render_template("graph.html",
+          news     = covid_news(),
           regions  = G.load_regions(),
           features = G.load_features())
 

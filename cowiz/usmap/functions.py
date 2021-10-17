@@ -1,6 +1,5 @@
 from flask import render_template, redirect, request, url_for, session, flash
 from datetime import datetime, timedelta
-from .article_search import ArticleSearch
 from .map_test import map_test
 
 check = {
@@ -52,10 +51,6 @@ def map():
                                              '%Y-%m-%d')  # converts the date to an appropriate format to be read by the code in map_test.py
         end_of_endDate = start_of_endDate.date() + timedelta(days=int(periodLength) - 1)
 
-    articles = ArticleSearch(start_of_endDate.date(),
-                             end_of_endDate)  # call the ArticleSearch function from article_search.py with the start and end dates of the time interval being checked
-    highlights = articles.search()  # store the return value of the search() function in article_search.py in highlights
-
     ##### formatting the 'end_of_startDate' variable to be in appropriate format "%d-%b-%Y"
     end_of_startDate_strip = str(end_of_startDate).split('-')
     x = datetime(int(end_of_startDate_strip[0]), int(end_of_startDate_strip[1]), int(end_of_startDate_strip[2]))
@@ -95,7 +90,7 @@ def map():
         'intervals': self.intervals,
         'rates': self.rates,
         'filepath': filepath,
-        'highlights': highlights,
+        'highlights': ['highlight', 'lowlight'],
         'ipt': ipt,
         'start': endDates['start'],
         'end': endDates['end'],

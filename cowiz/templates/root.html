@@ -92,6 +92,26 @@
       <a href="/"><img id="center" src="{{url_for('static', filename='web-images/homepage/banner-home-v2.png')}}" class="rounded mx-auto d-block img-height-auto"></a>
     </header>
 
+<!-- NYT update scrolling news banner -->
+    {% if news %}
+    <div style="width:100%;">
+      <div class="border border-dark text-light container-fluid float-left" style="margin-top: 0; width: 18.5%; height: 2.3vw; border-radius: 0px; background-color:#008DC9;">
+        <p style="margin-top:0.15vw"><b>NYT</b> Update</p>
+      </div>
+
+      <div class="border border-dark float-right container-fluid" style="margin-top: 0; width: 81.5%; height: 2.3vw; border-radius: 0px;">
+        <marquee scrollamount='3' scrolldelay='5'>
+          {% for page in news %}
+          <span>
+            {{ page['date'] }}: 
+            <a href="{{ page['link'] }}">{{ page['headline'] }}</a>&emsp;&emsp;&emsp;
+          </span>
+          {% endfor %}
+        </marquee>
+      </div>
+    </div>
+    {% endif %}
+
     <main class="container-fluid" style="width: 100%; font-size:1.2vw">{% block main %}{% endblock %}</main> 
 
   <!-- most of these links are empty! -->
