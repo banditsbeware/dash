@@ -1,6 +1,6 @@
 from flask import render_template, request
 from cowiz import app
-from cowiz.usmap.functions import FunctionsV2
+from cowiz.usmap import functions as U
 from cowiz.graph import functions as G
 
 @app.route('/')
@@ -10,8 +10,7 @@ def index(): return render_template("index.html")
 def usmap():
 
     if request.method == "POST":
-        functions = FunctionsV2()
-        data = functions.map()
+        data = U.map()
         return render_template("usmap.html",
                                intervals=data['intervals'],
                                rates=data['rates'],

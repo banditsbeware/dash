@@ -4,7 +4,7 @@
 
 {% block main %}
 <div style="width:100%;">
-				
+
   <div class="border border-dark text-light container-fluid float-left" style="margin-top: 0; width: 18.5%; height: 2.3vw; border-radius: 0px; background-color:#008DC9;">
     <p style="margin-top:0.15vw"><strong>CDC</strong> Update</p>
   </div>
@@ -17,10 +17,10 @@
 
 <div class="px-4 py-5 my-5 text-center container-fluid">
     <div class=" mx-auto text-center">
-      <p class="lead mb-4">Covid Wizard, or CoWiz, is a dashboard for visualizing base and analyzed Covid-19 US-specific data based on Multilayer Network (MLN) analysis underneath. 
-          Online dashboards typically plot/visualize statistical information gleaned from base data, such as daily cases, deaths, vaccinations, tests, etc. For a better 
-          understanding, CoWiz provides an interactive and flexible platform for checking the correlation between features, performing aggregate analysis and its visualization. 
-          CoWiz utilizes community and other concepts over MLNs that are inferred from Covid and other relevant data sets for visualization. This demo presents flexible, interactive 
+      <p class="lead mb-4">Covid Wizard, or CoWiz, is a dashboard for visualizing base and analyzed Covid-19 US-specific data based on Multilayer Network (MLN) analysis underneath.
+          Online dashboards typically plot/visualize statistical information gleaned from base data, such as daily cases, deaths, vaccinations, tests, etc. For a better
+          understanding, CoWiz provides an interactive and flexible platform for checking the correlation between features, performing aggregate analysis and its visualization.
+          CoWiz utilizes community and other concepts over MLNs that are inferred from Covid and other relevant data sets for visualization. This demo presents flexible, interactive
           dashboards that are capable of visualizing various aspects of Covid-19 data, including the composition of Covid data with demographics (population density, education level,
             average earning, vehicle movements, and change in purchase patterns) at the granularity of county for the U.S. As new data become available, they can be incorporated into the
             visualization with no manual intervention. </p>
@@ -32,12 +32,12 @@
 <div class="row row-cols-1 row-cols-md-2 g-4">
 
   <div class="col">
-    <a href="{{url_for('graph')}}" class="text-decoration-none">
+    <a href="/graph" class="text-decoration-none">
     <div class="card h-100">
     <img src="{{url_for('static', filename='web-images/homepage/animimg.png')}}" class="card-img-top" alt="...">
     <div class="card-body">
         <!-- <h5 class="card-title">Cowiz++</h5> -->
-        <p class="card-text">Animated Timeline for Feature Correlation: Understand the dependence among features (mobility in grocery stores vs. number of cases, 
+        <p class="card-text">Animated Timeline for Feature Correlation: Understand the dependence among features (mobility in grocery stores vs. number of cases,
             number of vaccinations vs. number of trips, …) for US states in the pandemic period through animated timeline plots. </p>
     </div>
     <div class="card-footer"> <small class="text-muted">extra info</small> </div>
@@ -46,12 +46,12 @@
   </div>
 
   <div class="col" >
-    <a href="{{url_for('usmap')}}" class="text-decoration-none">
+    <a href="/usmap" class="text-decoration-none">
     <div class="card h-100">
       <img src="{{url_for('static', filename='web-images/homepage/cowizimg.png')}}" class="card-img-top" alt="..."/>
       <div class="card-body">
           <!-- <h5 class="card-title">CoWiz</h5> -->
-          <p class="card-text">Interactive Map Visualization using MLNs: Visualize geographical regions with similar rise and decline in daily confirmed cases shift in the 
+          <p class="card-text">Interactive Map Visualization using MLNs: Visualize geographical regions with similar rise and decline in daily confirmed cases shift in the
               periods pre and post an event of interest (lockdown, vaccination drive, spring break, …) through interactive maps. </p>
       </div>
       <div class="card-footer">
@@ -65,8 +65,7 @@
     </div>
     </a>
   </div>
-    
+
 </div>
 
 {% endblock %}
-  

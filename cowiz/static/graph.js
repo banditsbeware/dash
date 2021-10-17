@@ -1,18 +1,15 @@
-// look into "tojson" feature to import data from python
-// https://stackoverflow.com/questions/37259740/passing-variables-from-flask-to-javascript
-
 // factory function for DataSet objects
-let DataSet = (xarr, yarr, side) => { 
+let DataSet = (xarr, yarr, side) => {
 
-  if (xarr.length !== yarr.length) 
+  if (xarr.length !== yarr.length)
     throw 'DataSet error: x & y lists are different sizes';
 
-  if (side !== 1 && side !== 2) 
+  if (side !== 1 && side !== 2)
     throw 'DataSet error: side must be 1 or 2';
 
-  return { 
-    x: xarr,              // x-values 
-    y: yarr,              // y-values 
+  return {
+    x: xarr,              // x-values
+    y: yarr,              // y-values
     n: xarr.length,       // number of points
     L: Math.min(...xarr), // left x
     R: Math.max(...xarr), // right x
@@ -41,7 +38,7 @@ let Dash = class {
     this.container.append(`<div id='${divID}lg' class='lift noscroll'></div>`);
     this.container.append(`<div id='${divID}rg' class='lift noscroll'></div>`);
     this.container.append(`<div id='${divID}b'></div>`);
-    
+
     $(`#${divID} #${divID}lg`).css({
       // 'display': 'inline',
       'background': 'white',
@@ -163,8 +160,8 @@ let Bar = class {
     this.obar.append(`<div id='${barID}-ibar'></div>`);
     this.obar.css('background-color', '#CCC')
     this.ibar = $(`#${barID}-ibar`);
-    this.ibar.css({ 
-      'height': `${this.obar.css('height')}`, 
+    this.ibar.css({
+      'height': `${this.obar.css('height')}`,
       'position': 'absolute',
       'background': '#EEEEEE'
     });
@@ -233,9 +230,9 @@ let Graph = class {
       this.ctx.strokeStyle = randColor();
       this.ctx.moveTo(ds.x[0], this.ch - ds.y[0] + this.floor);
 
-      for (let p = 1; p < ds.n; p++) 
+      for (let p = 1; p < ds.n; p++)
         this.ctx.lineTo(ds.x[p], this.ch - ds.y[p] + this.floor);
-      
+
       this.ctx.stroke();
       ds.graphed = true;
     }
@@ -282,7 +279,7 @@ let Graph = class {
 const linspace = (start, stop, n) => {
   let step = (stop - start) / n;
   let arr = [];
-  for (let i = start; i < stop; i += step) arr.push(i); 
+  for (let i = start; i < stop; i += step) arr.push(i);
 
   // for large n, rounding may cause an extra item; slice() trims arr to length n
   return arr.slice(0, n);
