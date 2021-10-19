@@ -2,6 +2,7 @@ from flask import render_template, redirect, request, url_for, session, flash
 from datetime import datetime, timedelta
 from .article_search import ArticleSearch
 from .map_test import map_test
+import time
 
 
 check = {
@@ -30,6 +31,22 @@ class FunctionsV2():
     }
 
     def map(self):
+
+        # wait until thread is free to run
+        locked = True
+        lock_path = 'usmap/lock.txt'
+        while locked:
+            with open(lock_path, 'r') as f:
+                c = f.read(1)
+                locked = c == '1'
+                print('waiting to unlock: ', c)
+                time.sleep(1e-3)
+
+        # lock critical section
+        with open(lock_path, 'w') as f:
+            print('locked')
+            f.write('1')
+
         highlights = ''
 
         # called if function called with POST API
@@ -92,6 +109,11 @@ class FunctionsV2():
         maphash = gen_map.get_maphash()
         returned_map = maphash[key]
         filepath = "maps/Cases-" + start_of_startDate + "vs" + start_of_endDate + "-intDays" + periodLength + "/" + returned_map  # get map url
+
+        # unlock critical section
+        with open(lock_path, 'w') as f:
+            print('unlocked')
+            f.write('0')
 
         # load index.html with new url for map
         return {
