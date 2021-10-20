@@ -27,13 +27,13 @@ def load_regions():
 def load_features():
   with open(datapath, 'r') as f: header = f.readline()[:-1]
   L = [W.replace('_', ' ').title() for W in header.split(',')]
-  return dict(enumerate(L))
+  return dict(enumerate(L[2:]))
 
 
 # returns a strange data structure! 
-# { region : { t : [ . . . ], 
-#             f1 : [ . . . ], 
-#             f2 : [ . . . ] },
+# { region : { t : [ . . . ],         <-- dates, "YYYY-MM-DD" 
+#             f1 : [ . . . ],         <-- floats
+#             f2 : [ . . . ] },       <-- floats
 #   region : { t : [ . . . ], 
 #             f1 : [ . . . ], 
 #             f2 : [ . . . ] } }
@@ -46,31 +46,29 @@ def get_curves(regions, f1, f2):
     C[r] = dict()
     C[r]['t']  = list()
     C[r]['f1'] = list()
-    C[r]['f2'] = list()
+    C[r]['f2'] = list() 
 
   # read all at once
   with open(datapath, 'r') as f: body = f.read().split('\n')
 
   # iterate through data and filter desired points into C
   for line in body:
-    l = line.split(','); region = l[0]
-    if region in regions:
-      C[region]['t' ].append(l[1]) # date
-      C[region]['f1'].append(float(l[f1]) if l[f1] else 0) # feature 1 data point
-      C[region]['f2'].append(float(l[f2]) if l[f2] else 0) # feature 2 data point
+    if line: 
+      r = line[:line.find(',')] # line's region name
+      if r in regions:
+        l = line.split(',')
+        C[r]['t' ].append(l[1]) # date
+        C[r]['f1'].append(float(l[f1+2]) if l[f1+2] else 0) # feature 1 data point
+        C[r]['f2'].append(float(l[f2+2]) if l[f2+2] else 0) # feature 2 data point
 
   return C
 
 # read input form and return data to be graphed
 def graph_data():
 
-  # initialize stateList as an empty list; will contain the states (full name)
-  # which the user selected to view
   selected_regions = list()
 
-  # function called with POST API
   if request.method == "POST":
-
     ipt = request.form
 
     for field in ipt:

@@ -60,4 +60,9 @@ def graph():
 from json import dumps
 @app.route("/graph/animate", methods=['POST'])
 def animate():
-    return render_template("graph.html", data = dumps(G.graph_data()))
+  features = G.load_features()
+  return render_template("graph.html", 
+    data     = dumps(G.graph_data()),
+    feature1 = features[ int(request.form['feature1']) ],
+    feature2 = features[ int(request.form['feature2']) ]
+  )

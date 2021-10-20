@@ -1,5 +1,5 @@
 // factory function for DataSet objects
-let DataSet = (xarr, yarr, side) => {
+let DataSet = (xarr, yarr, side, name, color) => {
 
   if (xarr.length !== yarr.length)
     throw 'DataSet error: x & y lists are different sizes';
@@ -15,8 +15,8 @@ let DataSet = (xarr, yarr, side) => {
     R: Math.max(...xarr), // right x
     B: Math.min(...yarr), // bottom y
     T: Math.max(...yarr), // top y
-    color: '',
-    name: '',
+    name: name,
+    color: color,
     graphed: false,
     side: side
   }
@@ -39,18 +39,22 @@ let Dash = class {
     // left graph, right graph, and scrollbar
     this.container.append(`<div id='${divID}lg' class='lift noscroll'></div>`);
     this.container.append(`<div id='${divID}rg' class='lift noscroll'></div>`);
+    this.container.append(`<div id='${divID}lg-title'></div>`);
+    this.container.append(`<div id='${divID}rg-title'></div>`);
     this.container.append(`<div id='${divID}b'></div>`);
 
     $(`#${divID} #${divID}lg`).css({
       'background': 'white',
       'width': `${gw}px`,
-      'height': `${gh}px`
+      'height': `${gh}px`,
+      'overflow': 'hidden'
     });
     $(`#${divID} #${divID}rg`).css({
       'background': 'white',
       'width': `${gw}px`,
       'height': `${gh}px`,
-      'left': `${gw + 2 * p}px`
+      'left': `${gw + 2 * p}px`,
+      'overflow': 'hidden'
     });
     $(`#${divID} #${divID}b`).css({
       'width': `${2 * gw + p}px`,
@@ -59,8 +63,7 @@ let Dash = class {
       'overflow': 'hidden',
       'box-sizing': 'border-box'
     });
-    $(`#${divID} div`).css('position', 'absolute');
-    $(`#${divID} div`).css('scrollbar-width', 'none');
+    $(`#${divID} div`).css({'position': 'absolute', 'scrollbar-width': 'none'});
     $(`#${divID} div::-webkit-scrollbar`).css('display', 'none');
 
     this.LG = new Graph(`${divID}lg`);
@@ -98,16 +101,18 @@ let Dash = class {
 
     // construct normalized dataset y' = <canvas height> * (y - min) / (max - min)
     this.normdata = [];
-    for (let d of this.data)
-      this.normdata.push( DataSet( d.x, d.y.map( y => this.ch * (y - this.floor) / dh), d.side ) );
-
-    console.log(Math.max(... this.normdata.map(d => d.T)))
+    for (let d of this.data) this.normdata.push( 
+        DataSet( d.x, d.y.map( y => this.ch * (y - this.floor) / dh), d.side, d.name, d.color ) );
   }
+
+  set xlbl(x) { this._xlbl = x };
+  get xlbl() { return this._xlbl; }
 
   drawData() {
     this.clear();
-    this.LG.grid(); 
-    this.RG.grid(); 
+    let ymin = this.floor, ymax = ymin + this.dataHeight();
+    this.LG.grid(this.xlbl, ymin, ymax); 
+    this.RG.grid(this.xlbl, ymin, ymax); 
 
     for (let ds of this.normdata) {
       if (ds.side === 1) this.LG.draw(ds);
@@ -160,7 +165,6 @@ let Bar = class {
     this.dib = document.getElementById(`${barID}-ibar`);
     this.dib.onmousedown = this.startDrag;
     this.x0, this.x;
-
   }
 
   setWidth = () => {
@@ -200,33 +204,28 @@ let Graph = class {
     this.div = $(`#${graphID}`);
     this.div.css('overflow', 'hidden');
 
-    let divw = parseInt(this.div.css('width'));
-    let divh = parseInt(this.div.css('height'));
+    this.cw = parseInt(this.div.css('width'));    // canvas width
+    this.ch = parseInt(this.div.css('height'));   // canvas height
 
     // add <canvas> to the main <div>
-    this.div.append(`<canvas id="${graphID}-cvs" height="${divh}" width="${divw}"></canvas>`);
+    this.div.append(`<canvas id="${graphID}-cvs" height="${this.ch}" width="${this.cw}"></canvas>`);
 
     // create internal <canvas> object
     this.cvs = $(`#${graphID} #${graphID}-cvs`);
 
     // obtain the new canvas's context
     this.ctx = this.cvs[0].getContext('2d');
-
-    this.w = divw;     // view width
-    this.cw = divw;    // canvas width
-    this.ch = divh;    // canvas height
-    this.xvis = 1;     // fraction of x which is visible
+    this.ctx.strokeWidth = 3;
   }
 
   // plot a dataset
   draw(ds) {
     if (!ds.graphed) {
+      this.ctx.strokeStyle = ds.color;
       this.ctx.beginPath();
-      this.ctx.strokeStyle = randColor();
       this.ctx.moveTo(ds.x[0], this.ch - ds.y[0]);
 
-      for (let p = 1; p < ds.n; p++) 
-        this.ctx.lineTo(ds.x[p], this.ch - ds.y[p]);
+      for (let p = 1; p < ds.n; p++) this.ctx.lineTo(ds.x[p], this.ch - ds.y[p]);
 
       this.ctx.stroke();
       ds.graphed = true;
@@ -238,49 +237,41 @@ let Graph = class {
   clear() { this.ctx.clearRect(0, 0, this.cw, this.ch); }
 
   // draw the grid
-  grid() {
+  grid(xlbl, ymin, ymax) {
 
-    this.ctx.strokeStyle = '#e5e3e6';
+    // number of horizontal gridlines
+    let yGrain = 8;
+
+    this.ctx.strokeStyle = '#D0D0D0';
     this.ctx.strokeWidth = 5;
+    this.ctx.font = 'normal 15px monospace';
+    this.ctx.fillStyle = 'grey';
 
-    let d = 10;
-    let dx = Math.floor(this.cw / d);
-    let dy = Math.floor(this.ch / d);
+    let dx = Math.floor(this.cw / xlbl.length);
 
-    for (let i = 0; i < d; i++) {
+    let ylbl = [], lat;
+    for (let i = ymin; i < ymax; i += (ymax - ymin) / yGrain) ylbl.push(Math.floor(i));
+    for (let i = 1; i < yGrain; i++) {
+      lat = this.ch * (1 - i / yGrain);
       this.ctx.beginPath();
-
-      this.ctx.moveTo(i * dx, this.ch);
-      this.ctx.lineTo(i * dx, 0);
-
-      this.ctx.moveTo(0, i * dy);
-      this.ctx.lineTo(this.cw, i * dy);
-
+      this.ctx.moveTo(0, lat);
+      this.ctx.lineTo(this.cw, lat)
       this.ctx.stroke();
+      this.ctx.fillText(ylbl[i], 0, lat);
     }
 
-    if (this.floor < 0) {
-      this.ctx.strokeStyle = '#303030';
+    for (let i in xlbl) {
       this.ctx.beginPath();
-      this.ctx.moveTo(0, this.ch + this.floor);
-      this.ctx.lineTo(this.cw, this.ch + this.floor);
+      this.ctx.moveTo(i * dx, 0);
+      this.ctx.lineTo(i * dx, this.ch);
       this.ctx.stroke();
+      this.ctx.fillText(xlbl[i], i * dx, this.ch - 10);
     }
+
   }
 }
 
-// n evenly spaced numbers over the interval [start, stop)
-const linspace = (start, stop, n) => {
-  let step = (stop - start) / n;
-  let arr = [];
-  for (let i = start; i < stop; i += step) arr.push(i);
-
-  // for large n, rounding may cause an extra item; slice() trims arr to length n
-  return arr.slice(0, n);
-}
-
-// some colors to choose from
-const colorList = ['#a288e3', '#006e90', '#c08497', '#363537','#ef2d56','#8cd867','#2fbf71','#053225','#4adbc8'];
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 // random integer in the range [min, max)
 const randInt = (min, max) => min + Math.floor((Math.random() * (max - min)));
@@ -292,4 +283,8 @@ let randList = (n, min, max) => {
   return r;
 }
 
-const randColor = () => colorList[randInt(0, colorList.length)];
+const randColor = () => {
+  let s = '#';
+  for (let i=0; i<6; i++) s += ((Math.random() * 16 | 0)).toString(16);
+  return s
+}

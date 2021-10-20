@@ -14,6 +14,7 @@
 </style>
 
 <button class='btn btn-info' type='button' onclick='window.open("/graph", "_self")' style='margin:25px'>New Query</button>
+<br><span>{{ feature1 }}</span>&emsp;&emsp;&emsp;&emsp;<span>{{ feature2 }}</span>
 <div id='dash'></div>
 <script src="{{ url_for('static', filename='graph.js') }}"></script>
 <script type='text/javascript'>
@@ -22,13 +23,28 @@
 
   let db = new Dash('dash', 500, 400, 15);
 
+  // pretty month names that cover all datasets
+  let xlbl = new Set();
+  for (let r in data) 
+    for (let day of data[r].t) xlbl.add(day.slice(0,7));
+  xlbl = Array(... xlbl).sort()
+    .map(m => `${monthNames[parseInt(m.slice(5))-1]} ${m.slice(0,4)}`);
+
   for (let r in data) {
-    xvals = [];
-    // the factor of 10 helps space out data (i.e. 10px wide per data point)
-    for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
-    db.push(DataSet(xvals, data[r]['f1'], 1));
-    db.push(DataSet(xvals, data[r]['f2'], 2));
+    let xvals = [], c = randColor();
+
+    // factor of 10 helps space out data (i.e. 10px wide per data point)
+    for (let i = 0; i < data[r].t.length; i++) {
+      xvals.push(10 * i);
+    }
+
+    // exclude string feature names from datasets
+    db.push(DataSet( xvals, data[r]['f1'], 1, r, c ));
+    db.push(DataSet( xvals, data[r]['f2'], 2, r, c ));
+
   }
+  
+  db.xlbl = xlbl;
   db.drawData();
 
 </script>
