@@ -15,6 +15,8 @@ let DataSet = (xarr, yarr, side) => {
     R: Math.max(...xarr), // right x
     B: Math.min(...yarr), // bottom y
     T: Math.max(...yarr), // top y
+    color: '',
+    name: '',
     graphed: false,
     side: side
   }
@@ -40,13 +42,11 @@ let Dash = class {
     this.container.append(`<div id='${divID}b'></div>`);
 
     $(`#${divID} #${divID}lg`).css({
-      // 'display': 'inline',
       'background': 'white',
       'width': `${gw}px`,
       'height': `${gh}px`
     });
     $(`#${divID} #${divID}rg`).css({
-      // 'display': 'inline',
       'background': 'white',
       'width': `${gw}px`,
       'height': `${gh}px`,
@@ -54,7 +54,7 @@ let Dash = class {
     });
     $(`#${divID} #${divID}b`).css({
       'width': `${2 * gw + p}px`,
-      'height': `${p}px`,
+      'height': `${p + 5}px`,
       'top': `${gh + 2 * p}px`,
       'overflow': 'hidden',
       'box-sizing': 'border-box'
@@ -69,11 +69,14 @@ let Dash = class {
     this.B.parent = this;
 
     this.data = [];
+    this.normdata = [];
 
     this.xvis = 1;
-    this.canw = gw;
-    this.canh = gh;
+    this.ow   = gw;
+    this.cw   = gw;
+    this.ch   = gh;
     this.floor = 0;
+    this.sf = 1.0;
   }
 
   // push a dataset onto the dashboard
@@ -81,80 +84,68 @@ let Dash = class {
     this.data.push(ds);
     let dw = this.dataWidth();
     let dh = this.dataHeight();
-    let regrid = false;
 
-    this.xvis = this.w / dw;
+    this.floor = Math.floor(Math.min(this.floor, ... this.data.map(d => d.B)));
+
+    this.xvis = this.ow / dw;
 
     // adjust canvas width to fit wide data
-    if (dw > this.canw) {
-      this.clear();
+    if (dw > this.cw) {
       this.LG.setw(dw);
       this.RG.setw(dw);
-      this.canw = dw;
-      regrid = true;
+      this.cw = dw;
     }
 
-    // if data is too low, refloor
-    if (ds.B < this.floor) {
-      this.clear();
-      this.LG.floor = ds.B;
-      this.RG.floor = ds.B;
-      this.floor = ds.B;
-      regrid = true;
-    }
+    // construct normalized dataset y' = <canvas height> * (y - min) / (max - min)
+    this.normdata = [];
+    for (let d of this.data)
+      this.normdata.push( DataSet( d.x, d.y.map( y => this.ch * (y - this.floor) / dh), d.side ) );
 
-    // if data is too tall, scale the y-axis
-    if (dh > this.canh) {
-      this.clear();
-      this.LG.yfit(dh);
-      this.RG.yfit(dh);
-      this.canh = dh;
-      regrid = true;
-    }
+    console.log(Math.max(... this.normdata.map(d => d.T)))
+  }
 
-    // redraw
-    if (regrid) { this.LG.grid(); this.RG.grid(); }
-    for (let ds of this.data) {
+  drawData() {
+    this.clear();
+    this.LG.grid(); 
+    this.RG.grid(); 
+
+    for (let ds of this.normdata) {
       if (ds.side === 1) this.LG.draw(ds);
       if (ds.side === 2) this.RG.draw(ds);
     }
-    // this.B.refresh();
+    this.B.setWidth();
+  }
+
+  // scroll both graphs; a expected to be in the range [0, 1]
+  scroll(a) {
+    this.LG.div.scrollLeft(a * (this.cw - this.ow));
+    this.RG.div.scrollLeft(a * (this.cw - this.ow));
   }
 
   // the width of the widest dataset
-  dataWidth() {
-    let w = 0;
-    for (let ds of this.data) if (ds.R - ds.L > w) w = ds.R - ds.L;
-    return w;
-  }
+  dataWidth = () => Math.ceil(Math.max(... this.data.map(d => d.R - d.L)));
 
-  // the height of the tallest dataset
-  dataHeight() {
-    let h = 0;
-    for (let ds of this.data) if (ds.T - ds.B > h) h = ds.T - ds.B;
-    return h;
-  }
+  // the height of the tallest dataset (including the floor!)
+  dataHeight = () => Math.ceil(Math.max(... this.data.map(d => d.T - this.floor)));
 
   // empty all visuals from graphs
   clear() {
-    for (let ds of this.data) ds.graphed = false;
+    for (let ds of this.normdata) ds.graphed = false;
     this.LG.clear();
     this.RG.clear();
-    // this.B.reset();
   }
 }
 
 let Bar = class {
-// https://jsfiddle.net/uq2pLufn/3/
-// http://jsfiddle.net/3jMQD/
-
 
   constructor(barID) {
 
+    // set to the Graph object to which this Bar belongs
     this.parent;
 
-    // assume both graphs have the same data width
     this.obar = $(`#${barID}`);
+    this.ow = parseInt(this.obar.css('width'));
+    this.iw;
 
     // create and append inner (draggable) bar
     this.obar.append(`<div id='${barID}-ibar'></div>`);
@@ -172,6 +163,11 @@ let Bar = class {
 
   }
 
+  setWidth = () => {
+    this.iw = this.parent.xvis * this.ow;
+    this.ibar.css('width', `${this.iw}px`);
+  }
+
   startDrag = (e) => {
     this.x0 = e.clientX;
     document.onmouseup = this.stopDrag;
@@ -182,8 +178,11 @@ let Bar = class {
     this.x = this.x0 - e.clientX;
     this.x0 = e.clientX;
     let d = this.dib.offsetLeft - this.x;
-    if (d >= 0)
+    if (d >= 0 && d + this.iw <= this.ow) {
       this.dib.style.left = this.dib.offsetLeft - this.x + "px"
+      // parameter has range 0 to 1; mapped to appropriate scroll value in parent.scroll
+      this.parent.scroll(this.dib.offsetLeft / (this.ow - this.iw));
+    }
   }
 
   stopDrag = (e) => {
@@ -198,17 +197,14 @@ let Graph = class {
     this.id = graphID;
 
     // select the <div>
-    let div = $(`#${graphID}`);
-    div.css({
-      'overflow-x': 'scroll',
-      'overflow-y': 'hidden'
-    });
+    this.div = $(`#${graphID}`);
+    this.div.css('overflow', 'hidden');
 
-    let divw = parseInt(div.css('width'));
-    let divh = parseInt(div.css('height'));
+    let divw = parseInt(this.div.css('width'));
+    let divh = parseInt(this.div.css('height'));
 
     // add <canvas> to the main <div>
-    div.append(`<canvas id="${graphID}-cvs" height="${divh}" width="${divw}"></canvas>`);
+    this.div.append(`<canvas id="${graphID}-cvs" height="${divh}" width="${divw}"></canvas>`);
 
     // create internal <canvas> object
     this.cvs = $(`#${graphID} #${graphID}-cvs`);
@@ -218,8 +214,7 @@ let Graph = class {
 
     this.w = divw;     // view width
     this.cw = divw;    // canvas width
-    this.ch = divh;    // canvas height (gets scaled)
-    this.floor = 0;    // lowest point on the graph
+    this.ch = divh;    // canvas height
     this.xvis = 1;     // fraction of x which is visible
   }
 
@@ -228,10 +223,10 @@ let Graph = class {
     if (!ds.graphed) {
       this.ctx.beginPath();
       this.ctx.strokeStyle = randColor();
-      this.ctx.moveTo(ds.x[0], this.ch - ds.y[0] + this.floor);
+      this.ctx.moveTo(ds.x[0], this.ch - ds.y[0]);
 
-      for (let p = 1; p < ds.n; p++)
-        this.ctx.lineTo(ds.x[p], this.ch - ds.y[p] + this.floor);
+      for (let p = 1; p < ds.n; p++) 
+        this.ctx.lineTo(ds.x[p], this.ch - ds.y[p]);
 
       this.ctx.stroke();
       ds.graphed = true;
@@ -240,14 +235,13 @@ let Graph = class {
 
   setw(w) { this.cw = w; this.cvs.attr('width', w); }
 
-  yfit(toFit) { this.ctx.scale(1, this.ch / toFit); this.ch = toFit; }
-
   clear() { this.ctx.clearRect(0, 0, this.cw, this.ch); }
 
   // draw the grid
   grid() {
 
     this.ctx.strokeStyle = '#e5e3e6';
+    this.ctx.strokeWidth = 5;
 
     let d = 10;
     let dx = Math.floor(this.cw / d);

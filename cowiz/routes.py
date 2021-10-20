@@ -52,8 +52,6 @@ def usmap():
 def graph():
   # set DATAPATH here depending on whether the user clicked 'US', 'India', etc
   # ... then graph/functions.py will load the corresponding CSV file
-  for x in covid_news()[0]:
-    print(x)
   return render_template("graph.html",
           news     = covid_news(),
           regions  = G.load_regions(),

@@ -1,0 +1,57 @@
+<!-- document built for testing graph.js -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>cangraph</title>
+    <script src='./cowiz/static/jquery.js'></script>
+    <script src='./cowiz/static/graph.js'></script>
+  </head>
+  <body>
+
+    <style>
+      html {
+        overflow: hidden;
+        background: rgb(180, 180, 180);
+      }
+
+      div.lift {
+        border: 1px solid rgb(71, 71, 71);
+        box-shadow: 3px 3px 3px 3px gray;
+      }
+
+      div.noscroll::-webkit-scrollbar { display: none;}
+    </style>
+
+    <div id='dash' class='lift'></div>
+
+    <script> 
+
+      let x = linspace(0, 1000, 1000);
+
+      let y1 = x.map(n => n * Math.sin(0.1 * n));
+      let y2 = x.map(n => Math.random() * n * Math.sin(n)**2);
+
+      let d1 = DataSet(x, y1, 1);
+      let d2 = DataSet(x, y2, 2);
+      let d3 = DataSet([0, 100, 200], [-1000, 1000, 0], 1);
+      let d4 = DataSet([0, 200, 4000], [-1000, 1000, -1000], 2);
+      let d5 = DataSet([0, 200, 400], [-2000, 10000, -2000], 1);
+
+      let db = new Dash('dash', 500, 400, 15);
+
+      db.push(d1);
+      db.push(d2);
+      db.push(d3);
+      db.push(d4);
+      db.push(d5);
+
+      db.drawData();
+
+      console.log(`scale factor: ${db.sf}`);
+      console.log(`data height: ${db.dataHeight()}`);
+      console.log(`graph floor: ${db.floor}`);
+      console.log(`canvas height: ${db.ch}`);
+
+    </script>
+  </body>
+</html>

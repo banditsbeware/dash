@@ -20,16 +20,16 @@
 
   let data = JSON.parse('{{ data|safe }}');
 
-  let dash = new Dash('dash', 500, 500, 15);
+  let db = new Dash('dash', 500, 400, 15);
 
-  for (let region in data) {
-    let x = [], r = data[region];
-
-    for (let i=0; i<r.t.length; i++) x.push(i);
-    console.log(r.f1, r.f2);
-    dash.push(DataSet(x, r.f1, 1));
-    dash.push(DataSet(x, r.f2, 2));
+  for (let r in data) {
+    xvals = [];
+    // the factor of 10 helps space out data (i.e. 10px wide per data point)
+    for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
+    db.push(DataSet(xvals, data[r]['f1'], 1));
+    db.push(DataSet(xvals, data[r]['f2'], 2));
   }
+  db.drawData();
 
 </script>
 
@@ -60,5 +60,7 @@
 </div>
 
 {% endif %}
+
+<div style='height:100px'></div>
 
 {% endblock %}
