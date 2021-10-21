@@ -1,5 +1,5 @@
 // factory function for DataSet objects
-let DataSet = (xarr, yarr, side, name, color) => {
+let DataSet = (xarr, yarr, side, color) => {
 
   if (xarr.length !== yarr.length)
     throw 'DataSet error: x & y lists are different sizes';
@@ -15,7 +15,6 @@ let DataSet = (xarr, yarr, side, name, color) => {
     R: Math.max(...xarr), // right x
     B: Math.min(...yarr), // bottom y
     T: Math.max(...yarr), // top y
-    name: name,
     color: color,
     graphed: false,
     side: side
@@ -24,44 +23,50 @@ let DataSet = (xarr, yarr, side, name, color) => {
 
 let Dash = class {
 
-  constructor(divID, gw, gh, p) {
+  constructor(divID, gw, gh, p, title1, title2, legend) {
 
     this.container = $(`#${divID}`);
     this.container.css({
-      'width': `${2 * gw + p}px`,
-      'height': `${gh + 2 * p}px`,
-      'padding': `${p}px`,
+      'font-size': '16px',
+      'width': '100%',
       'position': 'relative',
-      'margin': 'auto',
-      'display': 'block'
+      'display': 'grid',
+      'grid-template-rows': `${2 * p}px ${gh}px ${2 * p}px`,
+      'grid-template-columns': `1fr ${gw}px ${gw}px 300px 1fr`,
+      'grid-gap': `${p}px`,
+      'user-select': 'none'
     });
 
-    // left graph, right graph, and scrollbar
+    this.container.append(`<span id='${divID}-title1' style='grid-column: 2'>${title1}</span>`);
+    this.container.append(`<span id='${divID}-title2' style='grid-column: 3'>${title2}</span>`);
+    this.container.append(`<span id='${divID}-legend' style='grid-column: 4'>Legend</span>`);
     this.container.append(`<div id='${divID}lg' class='lift noscroll'></div>`);
     this.container.append(`<div id='${divID}rg' class='lift noscroll'></div>`);
-    this.container.append(`<div id='${divID}lg-title'></div>`);
-    this.container.append(`<div id='${divID}rg-title'></div>`);
     this.container.append(`<div id='${divID}b'></div>`);
 
+    $(`#${divID} span`).css({
+      'font-weight': 'bold',
+      'grid-row': '1', 
+      'align-self': 'end', 
+      'pointer-events': 'none'
+    });
     $(`#${divID} #${divID}lg`).css({
-      'background': 'white',
-      'width': `${gw}px`,
-      'height': `${gh}px`,
-      'overflow': 'hidden'
+      'width': `${gw}px`, 'height': `${gh}px`,
+      'overflow': 'hidden',
+      'max-width': '100%',
+      'grid-row': '2', 'grid-column': '2',
+      'box-shadow': '3px 3px 3px 3px gray'
     });
     $(`#${divID} #${divID}rg`).css({
-      'background': 'white',
-      'width': `${gw}px`,
-      'height': `${gh}px`,
-      'left': `${gw + 2 * p}px`,
-      'overflow': 'hidden'
+      'width': `${gw}px`, 'height': `${gh}px`,
+      'overflow': 'hidden',
+      'grid-row': '2', 'grid-column': '3',
+      'box-shadow': '3px 3px 3px 3px gray'
     });
     $(`#${divID} #${divID}b`).css({
-      'width': `${2 * gw + p}px`,
-      'height': `${p + 5}px`,
-      'top': `${gh + 2 * p}px`,
+      'width': '100%', 'height': `${1.5 * p}px`,
       'overflow': 'hidden',
-      'box-sizing': 'border-box'
+      'grid-row': '3', 'grid-column': '2 / span 2'
     });
     $(`#${divID} div`).css({'position': 'absolute', 'scrollbar-width': 'none'});
     $(`#${divID} div::-webkit-scrollbar`).css('display', 'none');
@@ -74,12 +79,11 @@ let Dash = class {
     this.data = [];
     this.normdata = [];
 
-    this.xvis = 1;
-    this.ow   = gw;
-    this.cw   = gw;
-    this.ch   = gh;
-    this.floor = 0;
-    this.sf = 1.0;
+    this.xvis = 1;  // the portion of the x-axis currently visible
+    this.ow   = gw; // outer width always represents 'div' or 'view' width (what user sees)
+    this.cw   = gw; // canvas width represents the underlying canvas, which hangs off underneath the div
+    this.ch   = gh; // the actual height of the canvas
+    this.floor = 0; // the lowest visible value
   }
 
   // push a dataset onto the dashboard
@@ -102,7 +106,7 @@ let Dash = class {
     // construct normalized dataset y' = <canvas height> * (y - min) / (max - min)
     this.normdata = [];
     for (let d of this.data) this.normdata.push( 
-        DataSet( d.x, d.y.map( y => this.ch * (y - this.floor) / dh), d.side, d.name, d.color ) );
+        DataSet( d.x, d.y.map( y => this.ch * (y - this.floor) / dh), d.side, d.color ) );
   }
 
   set xlbl(x) { this._xlbl = x };
@@ -110,9 +114,10 @@ let Dash = class {
 
   drawData() {
     this.clear();
-    let ymin = this.floor, ymax = ymin + this.dataHeight();
-    this.LG.grid(this.xlbl, ymin, ymax); 
-    this.RG.grid(this.xlbl, ymin, ymax); 
+    let ymin = this.floor, ymax = ymin + this.dataHeight(), 
+      zero = Math.abs( this.floor * this.ch / this.dataHeight() );
+    this.LG.grid(this.xlbl, ymin, ymax, zero); 
+    this.RG.grid(this.xlbl, ymin, ymax, zero); 
 
     for (let ds of this.normdata) {
       if (ds.side === 1) this.LG.draw(ds);
@@ -139,6 +144,12 @@ let Dash = class {
     this.LG.clear();
     this.RG.clear();
   }
+
+  legend(L) {
+    let str = '';
+    for (let i of L) { str += `<span style='color:${i[1]}'>${i[0]}</span><br>` }
+    this.container.append(`<span style='grid-row:2; grid-column:4; overflow-y: scroll'>${str}</span>`);
+  }
 }
 
 let Bar = class {
@@ -154,12 +165,12 @@ let Bar = class {
 
     // create and append inner (draggable) bar
     this.obar.append(`<div id='${barID}-ibar'></div>`);
-    this.obar.css('background-color', '#CCC')
+    this.obar.css('background-color', '#bbb')
     this.ibar = $(`#${barID}-ibar`);
     this.ibar.css({
       'height': `${this.obar.css('height')}`,
       'position': 'absolute',
-      'background': '#EEEEEE'
+      'background': '#ddd'
     });
 
     this.dib = document.getElementById(`${barID}-ibar`);
@@ -237,7 +248,7 @@ let Graph = class {
   clear() { this.ctx.clearRect(0, 0, this.cw, this.ch); }
 
   // draw the grid
-  grid(xlbl, ymin, ymax) {
+  grid(xlbl, ymin, ymax, zero) {
 
     // number of horizontal gridlines
     let yGrain = 8;
@@ -268,6 +279,12 @@ let Graph = class {
       this.ctx.fillText(xlbl[i], i * dx, this.ch - 10);
     }
 
+    // draw a dark line at zero
+    this.ctx.strokeStyle = '#303030';
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, this.ch - zero);
+    this.ctx.lineTo(this.cw, this.ch - zero);
+    this.ctx.stroke();
   }
 }
 

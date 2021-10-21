@@ -6,45 +6,43 @@
 
 {% if data %} <!-- if the page is being loaded with graph data, generate graphs -->
 
-<style>
-  div.lift {
-    border: 1px solid rgb(71, 71, 71);
-    box-shadow: 3px 3px 3px 3px gray;
-  }
-</style>
-
-<button class='btn btn-info' type='button' onclick='window.open("/graph", "_self")' style='margin:25px'>New Query</button>
-<br><span>{{ feature1 }}</span>&emsp;&emsp;&emsp;&emsp;<span>{{ feature2 }}</span>
+<button style='float: left; margin: 20px' onclick='window.open("/graph", "_self")'>&larr; New Query</button>
 <div id='dash'></div>
+
 <script src="{{ url_for('static', filename='graph.js') }}"></script>
+
+<!-- this script unpacks data from the server, builds the Graph object, and graphs the data -->
 <script type='text/javascript'>
 
   let data = JSON.parse('{{ data|safe }}');
+ 
+  let db = new Dash('dash', 500, 400, 15, `{{ feature1 }}`, `{{ feature2 }}`);
 
-  let db = new Dash('dash', 500, 400, 15);
-
-  // pretty month names that cover all datasets
+  // this assumes that all datasets cover the same time range (they will all be plotted
+  // left-aligned with the horizontally 'widest' dataset)
   let xlbl = new Set();
   for (let r in data) 
     for (let day of data[r].t) xlbl.add(day.slice(0,7));
   xlbl = Array(... xlbl).sort()
     .map(m => `${monthNames[parseInt(m.slice(5))-1]} ${m.slice(0,4)}`);
 
+  // add two datasets to the dashboard per region - for features 1 & 2
+  let legend = Array();
   for (let r in data) {
     let xvals = [], c = randColor();
 
     // factor of 10 helps space out data (i.e. 10px wide per data point)
-    for (let i = 0; i < data[r].t.length; i++) {
-      xvals.push(10 * i);
-    }
+    for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
 
     // exclude string feature names from datasets
-    db.push(DataSet( xvals, data[r]['f1'], 1, r, c ));
-    db.push(DataSet( xvals, data[r]['f2'], 2, r, c ));
+    db.push(DataSet( xvals, data[r]['f1'], 1, c ));
+    db.push(DataSet( xvals, data[r]['f2'], 2, c ));
 
+    legend.push([r, c]);
   }
   
   db.xlbl = xlbl;
+  db.legend(legend);
   db.drawData();
 
 </script>
