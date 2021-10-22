@@ -83,16 +83,13 @@ let Dash = class {
     this.ow   = gw; // outer width always represents 'div' or 'view' width (what user sees)
     this.cw   = gw; // canvas width represents the underlying canvas, which hangs off underneath the div
     this.ch   = gh; // the actual height of the canvas
-    this.floor = 0; // the lowest visible value
   }
 
   // push a dataset onto the dashboard
   push(ds) {
+
     this.data.push(ds);
     let dw = this.dataWidth();
-    let dh = this.dataHeight();
-
-    this.floor = Math.floor(Math.min(this.floor, ... this.data.map(d => d.B)));
 
     this.xvis = this.ow / dw;
 
@@ -105,8 +102,10 @@ let Dash = class {
 
     // construct normalized dataset y' = <canvas height> * (y - min) / (max - min)
     this.normdata = [];
-    for (let d of this.data) this.normdata.push( 
-        DataSet( d.x, d.y.map( y => this.ch * (y - this.floor) / dh), d.side, d.color ) );
+    for (let d of this.data) {
+      let normy = d.y.map( y => this.ch * (y - this.floor(d.side)) / this.dataHeight(d.side));
+      this.normdata.push( DataSet( d.x, normy, d.side, d.color ) );
+    }
   }
 
   set xlbl(x) { this._xlbl = x };
@@ -114,10 +113,10 @@ let Dash = class {
 
   drawData() {
     this.clear();
-    let ymin = this.floor, ymax = ymin + this.dataHeight(), 
-      zero = Math.abs( this.floor * this.ch / this.dataHeight() );
-    this.LG.grid(this.xlbl, ymin, ymax, zero); 
-    this.RG.grid(this.xlbl, ymin, ymax, zero); 
+    let f1 = this.floor(1), h1 = this.dataHeight(1), 
+        f2 = this.floor(2), h2 = this.dataHeight(2);
+    this.LG.grid(this.xlbl, f1, f1 + h1, Math.abs(f1 * this.ch / h1)); 
+    this.RG.grid(this.xlbl, f2, f2 + h2, Math.abs(f2 * this.ch / h2)); 
 
     for (let ds of this.normdata) {
       if (ds.side === 1) this.LG.draw(ds);
@@ -126,7 +125,7 @@ let Dash = class {
     this.B.setWidth();
   }
 
-  // scroll both graphs; a expected to be in the range [0, 1]
+  // scroll both graphs; `a` expected to be in the range [0, 1]
   scroll(a) {
     this.LG.div.scrollLeft(a * (this.cw - this.ow));
     this.RG.div.scrollLeft(a * (this.cw - this.ow));
@@ -135,8 +134,13 @@ let Dash = class {
   // the width of the widest dataset
   dataWidth = () => Math.ceil(Math.max(... this.data.map(d => d.R - d.L)));
 
-  // the height of the tallest dataset (including the floor!)
-  dataHeight = () => Math.ceil(Math.max(... this.data.map(d => d.T - this.floor)));
+  // the height of the tallest dataset on `side` (1 or 2)
+  dataHeight = (side) => Math.ceil(Math.max(... 
+    this.data.filter(d => d.side === side).map(d => d.T - this.floor(side))));
+
+  // the lowest value on graph `side` (1 or 2)
+  floor = (side) => Math.floor(Math.min(0, ... 
+    this.data.filter(d => d.side === side).map(d => d.B)));
 
   // empty all visuals from graphs
   clear() {
