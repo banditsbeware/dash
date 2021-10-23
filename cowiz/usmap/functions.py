@@ -87,8 +87,8 @@ def map():
 
     # load index.html with new url for map
     return {
-        'intervals': self.intervals,
-        'rates': self.rates,
+        'intervals': intervals,
+        'rates': rates,
         'filepath': filepath,
         'highlights': ['highlight', 'lowlight'],
         'ipt': ipt,

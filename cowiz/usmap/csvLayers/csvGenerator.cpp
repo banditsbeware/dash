@@ -363,7 +363,7 @@ int main()
 	int e_mm[3];
 	int e_yy[3];
 
-        chdir("/home/jacob/Code/dash/usmap/csvLayers/");
+        chdir("cowiz/usmap/csvLayers/");
 
 	f1 = fopen("Covid19Period.conf", "r");
 	fgets(info, 499, f1);
