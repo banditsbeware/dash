@@ -26,6 +26,9 @@ import subprocess
 # Calculate the elapsed time for each check for a map or csv file
 import timeit
 
+# to lock threads to one at a time
+import threading
+lock = threading.Lock()
 
 class map_test() :
   # Constructor
@@ -123,11 +126,12 @@ class map_test() :
         nDate = self.fixDate(options[2])
         allLines[5] = (nDate + '\r\n')     # Update new second date
 
-        with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'w' ) as fp :
-          fp.writelines(allLines)
-        fp.close()
-       
-        subprocess.call(["cowiz/usmap/csvLayers/csvGenerator"])
+        with lock:
+          with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'w' ) as fp :
+            fp.writelines(allLines)
+          fp.close()
+
+          subprocess.call(["cowiz/usmap/csvLayers/csvGenerator"])
         #print( "csv key: %s doesn't exist" % key ) 
       #print( "map key: %s doesn't exist" % key )
 

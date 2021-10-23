@@ -1,3 +1,6 @@
 venv
 __pycache__
 .idea/
+cowiz/usmap/csvLayers/Covid19Period.conf
+cowiz/usmap/maptest/tables/csv_table.txt
+cowiz/usmap/maptest/tables/html_table.txt
