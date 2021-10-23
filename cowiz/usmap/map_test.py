@@ -113,7 +113,7 @@ class map_test() :
       if csvHash.get( key ) == None :
         # Rewrite the configuration file with the csv information
         #   we want to read in
-        with open( 'usmap/csvLayers/Covid19Period.conf', 'r' ) as fp :
+        with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'r' ) as fp :
           allLines = fp.readlines()
         fp.close()
 
@@ -123,16 +123,18 @@ class map_test() :
         nDate = self.fixDate(options[2])
         allLines[5] = (nDate + '\r\n')     # Update new second date
 
-        with open( 'usmap/csvLayers/Covid19Period.conf', 'w' ) as fp :
+        with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'w' ) as fp :
           fp.writelines(allLines)
         fp.close()
        
-        subprocess.call(["usmap/csvLayers/csvGenerator"])
+        subprocess.call(["cowiz/usmap/csvLayers/csvGenerator"])
         #print( "csv key: %s doesn't exist" % key ) 
       #print( "map key: %s doesn't exist" % key )
 
       # Creates a file path for where to store the map html files
-      mapPath = 'static/maps/'+ subName  # 'usmap/static/maps/'+ subName
+      mapPath = 'cowiz/static/maps/'+ subName
+      # mapPath will become the location of the HTML generated map
+      # previously 'usmap/static/maps/'+ subName
     
       # Checks if a directory for the map data set exists
       # If not, then we create one
@@ -145,7 +147,7 @@ class map_test() :
       fig = self.generateMap( subName, fName )
 
       # Add key and value to the HTML hash table 
-      with open( 'usmap/maptest/tables/html_table.txt', 'a' ) as fp :
+      with open( 'cowiz/usmap/maptest/tables/html_table.txt', 'a' ) as fp :
         if fig is None :
           fp.write( key + ',' + '../default.html\r\n' )
         else :
@@ -170,7 +172,7 @@ class map_test() :
     TODO: Create a way to parse a folder from filename
 
     """
-    path = ( 'usmap/csvLayers/'+ dirName +
+    path = ( 'cowiz/usmap/csvLayers/'+ dirName +
              '/' + fName + '.csv' )
 
     # Reads in the info from our COVID data set
@@ -264,7 +266,7 @@ class map_test() :
     #fig.show()
  
     # Path to the specific directory the file is stored in 
-    nDir  = ( 'static/maps/' + dirName + '/' )
+    nDir  = ( 'cowiz/static/maps/' + dirName + '/' )
 
     # Path to where to store the file for the hash table
     nFile = fName + '.html'
@@ -317,12 +319,12 @@ class map_test() :
     csvHash = {}
 
     # Empties out the file before we store new values
-    open( 'usmap/maptest/tables/csv_table.txt', 'w+' ).close()
+    open( 'cowiz/usmap/maptest/tables/csv_table.txt', 'w+' ).close()
 
     # Walks through each subdirectory in /cases/ and
     #   stores the names of the CSVs in csv_table.txt
     # ASantra: Other .csv may be present, need to ignore those
-    for path, subd, files in os.walk( 'usmap/csvLayers/' ) :
+    for path, subd, files in os.walk( 'cowiz/usmap/csvLayers/' ) :
       for names in files :
         # Only look for .csv files to store in our hash
         if (names[-3:] == 'csv'):
@@ -339,12 +341,12 @@ class map_test() :
                     '-' + keys[7] + '-' + keys[-2][7:] )
           
             # Writes the values to csv_table.txt
-            with open( 'usmap/maptest/tables/csv_table.txt', 'a+' ) as fp :
+            with open( 'cowiz/usmap/maptest/tables/csv_table.txt', 'a+' ) as fp :
               fp.write( key + ',' + names + '\r\n' )
           
             fp.close()
 
-    with open( 'usmap/maptest/tables/csv_table.txt', 'r' ) as fp :
+    with open( 'cowiz/usmap/maptest/tables/csv_table.txt', 'r' ) as fp :
       lines = fp.read().replace( '\r', '' ).split( '\n' )
 
     # Checks if the file is not empty
@@ -374,7 +376,7 @@ class map_test() :
     #   home page iframe
     mHash = {}
 
-    with open( 'usmap/maptest/tables/html_table.txt', 'r' ) as fp :
+    with open( 'cowiz/usmap/maptest/tables/html_table.txt', 'r' ) as fp :
       lines = fp.read().replace( '\r', '' ).split( '\n' )
 
     fp.close()
