@@ -4,14 +4,16 @@ from cowiz import app
 from cowiz.usmap import functions as U
 from cowiz.graph import functions as G
 from .article import covid_news
+from .who import who
 
 @app.route('/')
 def index(): 
   # the names of the files in `cowiz/static/graphdata` are directly used to create
   # the buttons that the user sees on the homepage.
   locales = [ L[:-4] for L in os.listdir('./cowiz/static/graphdata') ]
+  print(who())
 
-  return render_template("index.html", news = covid_news(), locales = locales)
+  return render_template("index.html", who = who(), news = covid_news(), locales = locales)
 
 @app.route("/usmap", methods=['GET', 'POST'])
 def usmap():
@@ -19,6 +21,7 @@ def usmap():
     if request.method == "POST":
         data = U.map()
         return render_template("usmap.html",
+          who = who(),
                                intervals=data['intervals'],
                                rates=data['rates'],
                                filepath=data['filepath'],
@@ -45,6 +48,7 @@ def usmap():
             8: 'All',
         }
         return render_template("usmap.html",
+          who = who(),
                 message    = '',
                 intervals  = intervals,
                 rates      = rates,
@@ -57,6 +61,7 @@ def usmap():
 @app.route("/graph/<locale>")
 def graph(locale):
   return render_template("graph.html",
+          who      = who(),
           news     = covid_news(),
           locale   = locale,
           regions  = G.load_regions(locale),

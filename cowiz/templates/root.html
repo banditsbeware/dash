@@ -92,7 +92,7 @@
     </header>
 
 {% if who %}
-<!-- Cumulative WHO update -->
+<!-- Cumulative WHO update: cases/deaths stats from major regions -->
     <div style="width:100%; display: grid; grid-template: 50px / 300px 1fr; align-items: center; border: 1px solid black; font-size: 18px;">
 
       <div style='grid-column: 1; background-color: #008DC9; align-self: stretch; display: flex; align-items: center;'>
@@ -101,25 +101,29 @@
 
       <div style="grid-column: 2; align-self: center">
         <marquee scrollamount='3' scrolldelay='5'>
-          {% for page in news %} <span> {{ page['date'] }}: <a href="{{ page['link'] }}">{{ page['headline'] }}</a>&emsp;&emsp;&emsp; </span> {% endfor %}
-        </marquee>
+          {% for R in who %} 
+          <span style='padding: 0 10px; font-weight: bold'>{{ R['region'] }}: 
+            <span style='color: orange'>{{ R['cases'] }} Cases</span> | 
+            <span style='color: red'>{{ R['deaths'] }} Deaths</span>
+            <img height=20 src='{{ url_for("static", filename="web-images/homepage/covid-logo.png") }}'>
+          </span> 
+          {% endfor %} </marquee>
       </div>
     </div>
 {% endif %}
 
 {% if news %}
-<!-- NYT update scrolling news banner -->
-<!-- ... TODO: make this a scrollable list -->
-    <div style="width:100%; display: grid; grid-template: 50px / 300px 1fr; align-items: center; border: 1px solid black; font-size: 18px;">
+<!-- NYT update: recent article list -->
+    <div style="width:100%; display: grid; grid-template: 100px / 300px 1fr; align-items: center; border: 1px solid black; font-size: 18px;">
 
       <div style='grid-column: 1; background-color: #008DC9; align-self: stretch; display: flex; align-items: center;'>
         <p style="margin: auto; color: white;"><b>NYT</b> Update</p>
       </div>
 
-      <div style="grid-column: 2; align-self: center">
-        <marquee scrollamount='3' scrolldelay='5'>
-          {% for page in news %} <span> {{ page['date'] }}: <a href="{{ page['link'] }}">{{ page['headline'] }}</a>&emsp;&emsp;&emsp; </span> {% endfor %}
-        </marquee>
+      <div style="grid-column: 2; align-self: center; text-align: left; height: 100px; overflow-y: scroll">
+        <ul> {% for page in news %} 
+          <li> {{ page['date'] }}: <a href="{{ page['link'] }}">{{ page['headline'] }}</a></li>
+         {% endfor %} </ul>
       </div>
     </div>
 {% endif %}
