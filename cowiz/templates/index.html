@@ -3,32 +3,31 @@
 {% block title %}COVID-19 Data Analytics{% endblock %}
 
 {% block main %}
-<div class="px-4 py-5 my-5 text-center container-fluid">
-    <div class=" mx-auto text-center">
-      <p class="lead mb-4">Covid Wizard, or CoWiz, is a dashboard for visualizing base and analyzed Covid-19 US-specific data based on Multilayer Network (MLN) analysis underneath.
-          Online dashboards typically plot/visualize statistical information gleaned from base data, such as daily cases, deaths, vaccinations, tests, etc. For a better
-          understanding, CoWiz provides an interactive and flexible platform for checking the correlation between features, performing aggregate analysis and its visualization.
-          CoWiz utilizes community and other concepts over MLNs that are inferred from Covid and other relevant data sets for visualization. This demo presents flexible, interactive
-          dashboards that are capable of visualizing various aspects of Covid-19 data, including the composition of Covid data with demographics (population density, education level,
-            average earning, vehicle movements, and change in purchase patterns) at the granularity of county for the U.S. As new data become available, they can be incorporated into the
-            visualization with no manual intervention. </p>
-    </div>
+<div style='padding: 10px; text-align:left; background-color: #fff2cc'>
+<ul>
+  <li><b>One stop Dashboard</b> developed by <b>IT Lab at UT Arlington</b> for <b>Interactive Covid-19 Data Visualization</b></li>
+  <li style="color: slateblue;"><b>Base Data</b> visualization: charts, line plots, moving averages …</li>
+  <li style="color: tomato;"><b>Analysis Results</b> visualization: county- and state-wise covid clusters, increase/decrease on a color-coded scale, time periods to compare, maps, zoom, hover for details</li>
+  <li style="color: slateblue;">Superimpose Covid Data with demographic, economic, education, and other indicators</li>
+  <li style="color: tomato;"><b>Sound Theoretical Underpinnings</b> for analysis: <i>multilayer networks, graphs, clustering, bottlenecks (centrality)</i></li>
+</ul>
 </div>
 
-<div class="b-example-divider"></div>
-
+<!-- TODO: make this a grid layout! -->
 <div class="row row-cols-1 row-cols-md-2 g-4">
-
   <div class="col">
-    <a href="/graph" class="text-decoration-none">
+    <a href="/graph/{{ locales[0] }}" class="text-decoration-none">
     <div class="card h-100">
-    <img src="{{url_for('static', filename='web-images/homepage/animimg.png')}}" class="card-img-top" alt="...">
+    <img style='padding: 30px 0 10px 0' src="{{url_for('static', filename='web-images/homepage/animimg.png')}}" class="card-img-top" alt="...">
     <div class="card-body">
-        <!-- <h5 class="card-title">Cowiz++</h5> -->
-        <p class="card-text">Animated Timeline for Feature Correlation: Understand the dependence among features (mobility in grocery stores vs. number of cases,
-            number of vaccinations vs. number of trips, …) for US states in the pandemic period through animated timeline plots. </p>
+        <h3>Animated Timeline for Feature Correlation</h3>
+        <p>Compare statistics from multiple regions side by side across the same time period</p>
     </div>
-    <div class="card-footer"> <small class="text-muted">extra info</small> </div>
+    <div class="card-footer"> 
+      {% for L in locales %} 
+      <a class='btn btn-warning' style='font-weight: bold' href='/graph/{{ L }}'>{{ L }}</a>
+      {% endfor %} 
+    </div>
     </div>
     </a>
   </div>
@@ -38,14 +37,11 @@
     <div class="card h-100">
       <img src="{{url_for('static', filename='web-images/homepage/cowizimg.png')}}" class="card-img-top" alt="..."/>
       <div class="card-body">
-          <!-- <h5 class="card-title">CoWiz</h5> -->
-          <p class="card-text">Interactive Map Visualization using MLNs: Visualize geographical regions with similar rise and decline in daily confirmed cases shift in the
+          <h3>Interactive Map Visualization using MLNs</h3> 
+          <p>Visualize geographical regions with similar rise and decline in daily confirmed cases shift in the
               periods pre and post an event of interest (lockdown, vaccination drive, spring break, …) through interactive maps. </p>
       </div>
       <div class="card-footer">
-        <a href="https://www.youtube.com/watch?v=4vJ56FYBSCg" class="text-center">
-            <i class='fas fa-paperclip' style='font-size:24px'></i>
-        </a>
         <a href="https://www.youtube.com/watch?v=4vJ56FYBSCg" class="text-center">
             <i class="fa fa-youtube-play" style="font-size:48px;color:red"></i>
         </a>

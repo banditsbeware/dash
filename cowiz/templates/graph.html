@@ -6,7 +6,7 @@
 
 {% if data %} <!-- if the page is being loaded with graph data, generate graphs -->
 
-<button style='float: left; margin: 20px' onclick='window.open("/graph", "_self")'>&larr; New Query</button>
+<button style='float: left; margin: 20px' onclick='window.open("/graph/{{ locale }}", "_self")'>&larr; New Query</button>
 <div id='dash'></div>
 
 <script src="{{ url_for('static', filename='graphFunctions.js') }}"></script>
@@ -51,7 +51,7 @@
 
 <div class="container-fluid ">
   <div class="card-deck bg-secondary p-3">
-    <form class="container-fluid" action="/graph/animate" method="POST" novalidate>
+    <form class="container-fluid" action="/graph/results/{{ locale }}" method="POST" novalidate>
       <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Select regions...  </button>
 
       <div class="dropdown-menu" style='max-height: 400px; overflow-y: scroll'>

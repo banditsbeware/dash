@@ -1,19 +1,14 @@
-from flask import request, current_app
-from cowiz import app
+from flask import request
 
-# Abhishek's data file
-# TODO: update regularly from journalistic source
-with app.app_context():
-  datapath = current_app.config['DATAPATH']
-
+def path(locale): return f'./cowiz/static/graphdata/{locale}.csv'
 
 # Read the set of unique regions from data file
 # Expects regions to be listed in the leftmost column
 # Returns a list of strings
-def load_regions():
+def load_regions(locale):
   regions = set() 
 
-  with open(datapath, 'r') as f:
+  with open(path(locale), 'r') as f:
     l = f.readline().split(',')[0]
     while l:
       regions.add(l)
@@ -24,8 +19,8 @@ def load_regions():
 
 # Read first line of data file and return a dictionary of available features
 # Returns a dict { ID: name }
-def load_features():
-  with open(datapath, 'r') as f: header = f.readline()[:-1]
+def load_features(locale):
+  with open(path(locale), 'r') as f: header = f.readline()[:-1]
   L = [W.replace('_', ' ').title() for W in header.split(',')]
   return dict(enumerate(L[2:]))
 
@@ -38,7 +33,7 @@ def load_features():
 #             f1 : [ . . . ], 
 #             f2 : [ . . . ] } }
 # e.g. get_curves(['Afghanistan', 'United States'], 'Total Cases', 'Total Deaths')
-def get_curves(regions, f1, f2):
+def get_curves(locale, regions, f1, f2):
 
   # initialize data structure
   C = dict()
@@ -49,7 +44,7 @@ def get_curves(regions, f1, f2):
     C[r]['f2'] = list() 
 
   # read all at once
-  with open(datapath, 'r') as f: body = f.read().split('\n')
+  with open(path(locale), 'r') as f: body = f.read().split('\n')
 
   # iterate through data and filter desired points into C
   for line in body:
@@ -64,7 +59,7 @@ def get_curves(regions, f1, f2):
   return C
 
 # read input form and return data to be graphed
-def graph_data():
+def graph_data(locale):
 
   selected_regions = list()
 
@@ -77,4 +72,4 @@ def graph_data():
     feature1 = int(ipt['feature1'])
     feature2 = int(ipt['feature2'])
 
-  return get_curves(selected_regions, feature1, feature2)    
+  return get_curves(locale, selected_regions, feature1, feature2)    

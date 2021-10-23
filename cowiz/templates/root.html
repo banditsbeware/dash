@@ -91,8 +91,21 @@
       <a href="/"><img id="center" src="{{url_for('static', filename='web-images/homepage/banner-home-v2.png')}}" class="rounded mx-auto d-block img-height-auto"></a>
     </header>
 
+{% if who %}
 <!-- Cumulative WHO update -->
-<!-- ... TODO: merge over from usmap.html, implement backend -->
+    <div style="width:100%; display: grid; grid-template: 50px / 300px 1fr; align-items: center; border: 1px solid black; font-size: 18px;">
+
+      <div style='grid-column: 1; background-color: #008DC9; align-self: stretch; display: flex; align-items: center;'>
+        <p style="margin: auto; color: white;">Cumulative <b>WHO</b> Update</p>
+      </div>
+
+      <div style="grid-column: 2; align-self: center">
+        <marquee scrollamount='3' scrolldelay='5'>
+          {% for page in news %} <span> {{ page['date'] }}: <a href="{{ page['link'] }}">{{ page['headline'] }}</a>&emsp;&emsp;&emsp; </span> {% endfor %}
+        </marquee>
+      </div>
+    </div>
+{% endif %}
 
 {% if news %}
 <!-- NYT update scrolling news banner -->
