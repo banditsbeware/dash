@@ -73,7 +73,11 @@ def animate(locale):
   features = G.load_features(locale)
 
   return render_template("graph.html", 
+    who      = who(),
+    news     = covid_news(),
     locale   = locale,
+    regions  = G.load_regions(locale),
+    features = G.load_features(locale),
     data     = dumps(G.graph_data(locale)),
     feature1 = features[ int(request.form['feature1']) ],
     feature2 = features[ int(request.form['feature2']) ]
