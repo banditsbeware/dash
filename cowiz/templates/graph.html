@@ -49,17 +49,58 @@
 </script>
 
 {% else %} <!-- if data is not present, provide a form for the user to request data -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+<style>
+  .checkbox-menu {
+    top: auto; left: auto;
+    max-height: 500px;
+    overflow-y: scroll;
+  }
+  .checkbox-menu li label {
+      display: block;
+      padding: 3px 10px;
+      clear: both;
+      font-weight: normal;
+      line-height: 1.42857143;
+      color: #333;
+      white-space: nowrap;
+      margin:0;
+  }
+  .checkbox-menu li input {
+      margin: 0px 5px;
+      top: 2px;
+      position: relative;
+  }
+
+  .checkbox-menu li.active label {
+      background-color: #cbcbff;
+      font-weight:bold;
+  }
+
+  .checkbox-menu li label:hover,
+  .checkbox-menu li label:focus { background-color: #f5f5f5; }
+
+  .checkbox-menu li.active label:hover,
+  .checkbox-menu li.active label:focus { background-color: #b8b8ff; }
+</style>
+
+<script>
+  $(".checkbox-menu").on("change", "input[type='checkbox']", function() { $(this).closest("li").toggleClass("active", this.checked); });
+  $(document).on('click', '.allow-focus', function (e) { e.stopPropagation(); });
+</script>
 
 <div class="container-fluid ">
   <div class="card-deck bg-secondary p-3">
     <form class="container-fluid" action="/graph/results/{{ locale }}" method="POST" novalidate>
-      <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Select regions...  </button>
 
-      <div class="dropdown-menu" style='max-height: 400px; overflow-y: scroll'>
+      <button class="btn btn-light dropdown-toggle" type="button" id="regionDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> Select regions...  </button>
+      <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="regionDropDown">
         {% for r in regions %}
-        <input id="{{ r }}" name="{{ r }}" class="m-1" type="checkbox" value="{{ r }}" onclick="countStates(id, value); enableSubmit(id);">{{ r }}<br> 
+        <li><label><input id="{{ r }}" name="{{ r }}" type="checkbox" value="{{ r }}">{{ r }}</label></li>
         {% endfor %}
-      </div>
+      </ul>
       
       <select id="feature1" class="card btn btn-light m-2" name="feature1" onchange="enableSubmit(id);">
         {% for f in features %} <option id = '{{ f }}' value = '{{ f }}'>{{ features[f] }}</option> {% endfor %}

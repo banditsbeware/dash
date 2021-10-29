@@ -6,15 +6,8 @@ def path(locale): return f'./cowiz/static/graphdata/{locale}.csv'
 # Expects regions to be listed in the leftmost column
 # Returns a list of strings
 def load_regions(locale):
-  regions = set() 
-
-  with open(path(locale), 'r') as f:
-    l = f.readline().split(',')[0]
-    while l:
-      regions.add(l)
-      l = f.readline().split(',')[0]
-
-  return sorted(list(regions))
+  with open(path(locale), 'r') as f: L = f.readlines()
+  return sorted( list( set( [l[:l.find(',')] for l in L[1:]] ) ) )
 
 
 # Read first line of data file and return a dictionary of available features
