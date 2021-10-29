@@ -1,4 +1,3 @@
-#!/usr/bin/python3.6
 from datetime import datetime as dt
 from datetime import timedelta
 from pynytimes import NYTAPI

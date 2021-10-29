@@ -11,7 +11,6 @@ def index():
   # the names of the files in `cowiz/static/graphdata` are directly used to create
   # the buttons that the user sees on the homepage.
   locales = [ L[:-4] for L in os.listdir('./cowiz/static/graphdata') ]
-  print(who())
 
   return render_template("index.html", who = who(), news = covid_news(), locales = locales)
 

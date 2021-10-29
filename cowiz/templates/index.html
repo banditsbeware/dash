@@ -1,6 +1,7 @@
 {% extends "root.html" %}
 
 {% block title %}COVID-19 Data Analytics{% endblock %}
+{% block banner_link %}{{ url_for('static', filename='images/home-banner.png') }}{% endblock %}
 
 {% block main %}
 <div style='padding: 10px; text-align:left; background-color: #fff2cc'>
@@ -18,16 +19,12 @@
   <div class="col">
     <a href="/graph/{{ locales[0] }}" class="text-decoration-none">
     <div class="card h-100">
-    <img style='padding: 30px 0 10px 0' src="{{url_for('static', filename='web-images/homepage/animimg.png')}}" class="card-img-top" alt="...">
-    <div class="card-body">
+      <img style='padding: 30px 0 10px 0' src="{{url_for('static', filename='images/graph-preview.png')}}" class="card-img-top" alt="...">
+      <div class="card-body">
         <h3>Animated Timeline for Feature Correlation</h3>
         <p>Compare statistics from multiple regions side by side across the same time period</p>
-    </div>
-    <div class="card-footer"> 
-      {% for L in locales %} 
-      <a class='btn btn-warning' style='font-weight: bold' href='/graph/{{ L }}'>{{ L }}</a>
-      {% endfor %} 
-    </div>
+      </div>
+      <div class="card-footer"> {% for L in locales %} <a class='btn btn-warning' style='font-weight: bold' href='/graph/{{ L }}'>{{ L }}</a> {% endfor %} </div>
     </div>
     </a>
   </div>
@@ -35,7 +32,7 @@
   <div class="col" >
     <a href="/usmap" class="text-decoration-none">
     <div class="card h-100">
-      <img src="{{url_for('static', filename='web-images/homepage/cowizimg.png')}}" class="card-img-top" alt="..."/>
+      <img src="{{url_for('static', filename='images/usmap-preview.png')}}" class="card-img-top" alt="..."/>
       <div class="card-body">
           <h3>Interactive Map Visualization using MLNs</h3> 
           <p>Visualize geographical regions with similar rise and decline in daily confirmed cases shift in the

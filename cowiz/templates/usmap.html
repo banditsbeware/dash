@@ -1,6 +1,7 @@
 {% extends "root.html" %}
 
 {% block title %}Map Visualization{% endblock %}
+{% block banner_link %}{{ url_for('static', filename='images/usmap-banner.png') }}{% endblock %}
 
 {% block main %}
 <script defer src='{{ url_for("static", filename="mapFunctions.js") }}'></script>
