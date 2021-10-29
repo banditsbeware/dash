@@ -1,0 +1,24 @@
+new_case,New Cases
+new_death,New Deaths
+new_tests,New Tests
+total_cases,Total Cases
+total_deaths,Total Deaths
+total_tests,Total Tests
+total_cases_per_million,Total Cases / Million
+total_deaths_per_million,Total Deaths / Million
+total_tests_per_thousand,Total Tests / Thousand
+reproduction_rate,COVID Reproduction Number (R0)
+positive_rate,Positivity Rate
+new_vaccinations,New Vaccinations
+total_vaccinations,Total Vaccinations
+people_vaccinated,People Vaccinated (>=1 Dose)
+people_fully_vaccinated,People Fully Vaccinated (All Doses)
+people_vaccinated_per_hundred,People Vaccinated / 100 (>=1 Dose)
+people_fully_vaccinated_per_hundred,People Fully Vaccinated / 100 (All Doses)
+stringency_index,Government Stringency Index
+retail_and_recreation_percent_change_from_baseline,Mobility %Change: Retail/Recreation
+grocery_and_pharmacy_percent_change_from_baseline,Mobility %Change: Grocery and Pharmacy
+parks_percent_change_from_baseline,Mobility %Change: Parks
+transit_stations_percent_change_from_baseline,Mobility %Change: Transit Stations
+workplaces_percent_change_from_baseline,Mobility %Change: Workplaces
+residential_percent_change_from_baseline,Mobility %Change: Residential Areas

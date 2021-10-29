@@ -1,4 +1,5 @@
 from flask import request
+from os.path import exists
 
 def path(locale): return f'./cowiz/static/graphdata/{locale}.csv'
 
@@ -13,19 +14,18 @@ def load_regions(locale):
 # Read first line of data file and return a dictionary of available features
 # Returns a dict { ID: name }
 def load_features(locale):
-  with open(path(locale), 'r') as f: header = f.readline()[:-1]
-  L = [W.replace('_', ' ').title() for W in header.split(',')]
-  return dict(enumerate(L[2:]))
+  with open(path(locale), 'r') as f: header = f.readline()[:-1].split(',')
+
+  # if a feature name mapping exists, convert to preferred names
+  if exists(path(f'F_{locale}')):
+    with open(path(f'F_{locale}'), 'r') as f: 
+      mapping = dict( [ ( ln.split(',')[0], ln.split(',')[1] ) for ln in f.readlines()] )
+    return dict( enumerate( [ mapping[h] for h in header if h in mapping ] ) ) 
+  else: 
+    return dict( enumerate ( header ) )
 
 
-# returns a strange data structure! 
-# { region : { t : [ . . . ],         <-- dates, "YYYY-MM-DD" 
-#             f1 : [ . . . ],         <-- floats
-#             f2 : [ . . . ] },       <-- floats
-#   region : { t : [ . . . ], 
-#             f1 : [ . . . ], 
-#             f2 : [ . . . ] } }
-# e.g. get_curves(['Afghanistan', 'United States'], 'Total Cases', 'Total Deaths')
+# e.g. get_curves('WORLD', ['Afghanistan', 'United States'], 0, 1)
 def get_curves(locale, regions, f1, f2):
 
   # initialize data structure

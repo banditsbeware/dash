@@ -1,0 +1,21 @@
+new_case,New Cases
+new_death,New Deaths
+new_tests,New Tests
+tot_cases,Total Cases
+tot_death,Total Deaths
+daily_vaccinations,New Vaccinations
+total_vaccinations,Total Vaccinations
+daily_vaccinations_per_million,New Vaccinations / Million
+people_vaccinated_per_hundred,People Vaccinated / 100 (>=1 Dose)
+people_fully_vaccinated_per_hundred,People Fully Vaccinated / 100 (All Doses)
+previous_day_admission_adult_covid_confirmed,New Adult Hospitalizations
+previous_day_admission_pediatric_covid_confirmed,New Pediatric Hospitalizations
+Number_of_Trips,New Trips
+Population_Staying_at_Home,Population at Home
+Number_of_Trips_500miles,New 500 mile Trips
+retail_and_recreation_percent_change_from_baseline,Mobility %Change: Retail/Recreation
+grocery_and_pharmacy_percent_change_from_baseline,Mobility %Change: Grocery and Pharmacy
+parks_percent_change_from_baseline,Mobility %Change: Parks
+transit_stations_percent_change_from_baseline,Mobility %Change: Transit Stations
+workplaces_percent_change_from_baseline,Mobility %Change: Workplaces
+residential_percent_change_from_baseline,Mobility %Change: Residential Areas
