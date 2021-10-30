@@ -38,9 +38,6 @@
 </style>
 
 <script defer>
-  // $(".checkbox-menu").on("change", "input[type='checkbox']", function() { 
-  //   $(this).closest("li").toggleClass("active", this.checked); 
-  // });
   $(document).on('click', '.allow-focus', function (e) { e.stopPropagation(); });
 
   const countRegions = () => {
@@ -99,7 +96,7 @@
 
   let data = JSON.parse('{{ data|safe }}');
  
-  let db = new Dash('dash', 500, 400, 15, `{{ feature1 }}`, `{{ feature2 }}`);
+  let db = new Dash('dash', $('main').width(), `{{ feature1 }}`, `{{ feature2 }}`);
 
   // this assumes that all datasets cover the same time range (they will all be plotted
   // left-aligned with the horizontally 'widest' dataset)

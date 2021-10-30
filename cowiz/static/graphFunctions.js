@@ -23,30 +23,34 @@ let DataSet = (xarr, yarr, side, color) => {
 
 let Dash = class {
 
-  constructor(divID, gw, gh, p, title1, title2, legend) {
+  constructor(divID, vw, title1, title2, legend) {
+
+    let p = 10;               // padding
+    let gw = (vw - p)/2;      // graph width
+    let gh = 0.75 * gw;       // graph height
 
     this.container = $(`#${divID}`);
     this.container.css({
       'font-size': '16px',
       'width': '100%',
+      'margin-top': '20px',
       'position': 'relative',
       'display': 'grid',
-      'grid-template-rows': `${2 * p}px ${gh}px ${2 * p}px`,
-      'grid-template-columns': `1fr ${gw}px ${gw}px 300px 1fr`,
+      'grid-template-rows': `${3*p}px ${3*p}px ${gh}px ${3*p}px ${3*p}px ${3*p}px`,
+      'grid-template-columns': `${gw}px ${gw}px`,
       'grid-gap': `${p}px`,
       'user-select': 'none'
     });
 
-    this.container.append(`<span id='${divID}-title1' style='grid-column: 2'>${title1}</span>`);
-    this.container.append(`<span id='${divID}-title2' style='grid-column: 3'>${title2}</span>`);
-    this.container.append(`<span id='${divID}-legend' style='grid-column: 4'>Legend</span>`);
-    this.container.append(`<div id='${divID}lg' class='lift noscroll'></div>`);
-    this.container.append(`<div id='${divID}rg' class='lift noscroll'></div>`);
-    this.container.append(`<div id='${divID}b'></div>`);
+    this.container.append(`<span id='${divID}-legend' style='grid-row: 1; grid-column: 1 / 3'>---Legend---</span>`);
+    this.container.append(`<span id='${divID}-title1' style='grid-row: 2; grid-column: 1'>${title1}</span>`);
+    this.container.append(`<span id='${divID}-title2' style='grid-row: 2; grid-column: 2'>${title2}</span>`);
+    this.container.append(`<div id='${divID}lg' class='lift noscroll' style='grid-row: 3; grid-column: 1'></div>`);
+    this.container.append(`<div id='${divID}rg' class='lift noscroll' style='grid-row: 3; grid-column: 2'></div>`);
+    this.container.append(`<div id='${divID}b' style='grid-row: 5; grid-column: 1 / 3'></div>`);
 
     $(`#${divID} span`).css({
       'font-weight': 'bold',
-      'grid-row': '1', 
       'align-self': 'end', 
       'pointer-events': 'none'
     });
@@ -54,19 +58,16 @@ let Dash = class {
       'width': `${gw}px`, 'height': `${gh}px`,
       'overflow': 'hidden',
       'max-width': '100%',
-      'grid-row': '2', 'grid-column': '2',
       'box-shadow': '3px 3px 3px 3px gray'
     });
     $(`#${divID} #${divID}rg`).css({
       'width': `${gw}px`, 'height': `${gh}px`,
       'overflow': 'hidden',
-      'grid-row': '2', 'grid-column': '3',
       'box-shadow': '3px 3px 3px 3px gray'
     });
     $(`#${divID} #${divID}b`).css({
       'width': '100%', 'height': `${1.5 * p}px`,
       'overflow': 'hidden',
-      'grid-row': '3', 'grid-column': '2 / span 2'
     });
     $(`#${divID} div`).css({'position': 'absolute', 'scrollbar-width': 'none'});
     $(`#${divID} div::-webkit-scrollbar`).css('display', 'none');
@@ -152,7 +153,7 @@ let Dash = class {
   legend(L) {
     let str = '';
     for (let i of L) { str += `<span style='color:${i[1]}'>${i[0]}</span><br>` }
-    this.container.append(`<span style='grid-row:2; grid-column:4; overflow-y: scroll'>${str}</span>`);
+    this.container.append(`<span style='grid-row:2; grid-column:4; overflow-y: scroll; display: none'>${str}</span>`);
   }
 }
 
