@@ -1,162 +1,94 @@
 <!DOCTYPE html>
 <html>
-  <head> <!-- is everything in this <head> necessary? -->
-
+  <head>
     <title> {% block title %}{% endblock %} | ITLab </title>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ZHW5H95M1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-2ZHW5H95M1');
-    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="COVID-19 Data Analysis and Visualization using Multilayer Networks at the Information Technology Lab in the Department of Computer Science and Engineering at The University of Texas at Arlington">
     <meta name="author" content="Information Technology Laboratory (ITLab) at UT Arlington">
     <meta name="generator" content="Jekyll v4.1.1">
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/cover/">
-
-    <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="/docs/4.5/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-    <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-    <link rel="mask-icon" href="/docs/4.5/assets/img/favicons/safari-pinned-tab.svg" color="#563d7c">
-    <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon.ico">
-    <meta name="msapplication-config" content="/docs/4.5/assets/img/favicons/browserconfig.xml">
-    <meta name="theme-color" content="#563d7c">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" sizes="16x16" type="image/png">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <style>
-    .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-        font-size: 3.5rem;
-        }
-    }
-    .img-height-auto{
-        height: auto;
-    }
-
-    .bootstrap-select .bs-ok-default::after {
-        width: 0.3em;
-        height: 0.6em;
-        border-width: 0 0.1em 0.1em 0;
-        transform: rotate(45deg) translateY(0.5rem);
-    }
-
-    .btn.dropdown-toggle:focus {
-        outline: none !important;
-    }
-    
-    </style>
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <link href="heroes.css" rel="stylesheet">
-    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
   </head>
 
   <body class="text-center">
     <header class="bg-white" style="margin-top: 5px; margin-bottom: 5px;">
-      <a href="https://www.uta.edu" target="_blank"><img id="uta_logo" src="{{url_for('static', filename='web-images/homepage/uta-logo-v5.png')}}" class="rounded float-left" style="margin-left: 15px;"></a>
-      <a href="https://itlab.uta.edu/" target="_blank"><img id="itlab_logo" src="{{url_for('static', filename='web-images/homepage/itlab-logo-v3.png')}}" class="rounded float-right" style="margin-right: 15px;"></a>
-      <a href="/"><img id="center" src="{{url_for('static', filename='web-images/homepage/banner-home-v2.png')}}" class="rounded mx-auto d-block img-height-auto"></a>
+      <a href="https://www.uta.edu" target="_blank"><img id="uta_logo" src="{{url_for('static', filename='images/uta-logo.png')}}" class="rounded float-left" style="margin-left: 15px;"></a>
+      <a href="https://itlab.uta.edu/" target="_blank"><img id="itlab_logo" src="{{url_for('static', filename='images/itlab-logo.png')}}" class="rounded float-right" style="margin-right: 15px;"></a>
+      <a href="/"><img id="center" src="{% block banner_link %}{% endblock %}" class="rounded mx-auto d-block img-height-auto"></a>
     </header>
 
-<!-- Cumulative WHO update -->
-<!-- ... TODO: merge over from usmap.html, implement backend -->
+{% if who %}
+<!-- Cumulative WHO update: cases/deaths stats from major regions -->
+    <div style="width:100%; display: grid; grid-template: 50px / 300px 1fr; align-items: center; border: 1px solid black; font-size: 18px;">
+
+      <div style='grid-column: 1; background-color: #008DC9; align-self: stretch; display: flex; align-items: center;'>
+        <p style="margin: auto; color: white;">Cumulative <b>WHO</b> Update</p>
+      </div>
+
+      <div style="grid-column: 2; align-self: center">
+        <marquee scrollamount='3' scrolldelay='5'>
+          {% for R in who %} 
+          <span style='padding: 0 10px; font-weight: bold'>{{ R['region'] }}: 
+            <span style='color: orange'>{{ R['cases'] }} Cases</span> | 
+            <span style='color: red'>{{ R['deaths'] }} Deaths</span>
+            <img height=20 src='{{ url_for("static", filename="images/virus.png") }}'>
+          </span> 
+          {% endfor %} </marquee>
+      </div>
+    </div>
+{% endif %}
 
 {% if news %}
-<!-- NYT update scrolling news banner -->
-<!-- ... TODO: make this a scrollable list -->
-    <div style="width:100%; display: grid; grid-template: 50px / 300px 1fr; align-items: center; border: 1px solid black; font-size: 18px;">
+<!-- NYT update: recent article list -->
+    <div style="width:100%; display: grid; grid-template: 100px / 300px 1fr; align-items: center; border: 1px solid black; font-size: 18px;">
 
       <div style='grid-column: 1; background-color: #008DC9; align-self: stretch; display: flex; align-items: center;'>
         <p style="margin: auto; color: white;"><b>NYT</b> Update</p>
       </div>
 
-      <div style="grid-column: 2; align-self: center">
-        <marquee scrollamount='3' scrolldelay='5'>
-          {% for page in news %} <span> {{ page['date'] }}: <a href="{{ page['link'] }}">{{ page['headline'] }}</a>&emsp;&emsp;&emsp; </span> {% endfor %}
-        </marquee>
+      <div style="grid-column: 2; align-self: center; text-align: left; height: 100px; overflow-y: scroll">
+        <ul> {% for page in news %} 
+          <li> {{ page['date'] }}: <a href="{{ page['link'] }}">{{ page['headline'] }}</a></li>
+         {% endfor %} </ul>
       </div>
     </div>
 {% endif %}
 
     <main class="container-fluid" style="width: 100%; font-size:1.2vw">{% block main %}{% endblock %}</main> 
 
-  <!-- most of these links are empty! -->
+  <!-- footer contains links to data/funding sources and developer sites -->
+    <style> #data-sources img { display: inline; float: left; padding: 0 10px; } </style>
     <div style='position: absolute; bottom: 0; width: 100%'>
-      <div class='container-fluid' style="margin-top:2vw; margin-bottom: 1vw; height:40px; font-size:1.2vw">
-                    
-        <div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 13%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:15px">
-            <p style="margin-top:0.15vw">Data Sources</p>
+      <div id='data-sources' class='container-fluid' style="margin-top:2vw; margin-bottom: 1vw; height:40px; font-size:1.2vw">
+        <div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: max-content; height: 30px; background-color:#FFF7DD">
+            <p style="margin:auto">Data Sources</p>
         </div>
-        <div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
-            <a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/sources/datasource-bts.png') }}" height="30px"></a>
-        </div>
-        <div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
-            <a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/sources/datasource-cdc.png') }}" height="30px"></a>
-        </div>
-        <div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
-            <a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/sources/datasource-google.png') }}" height="30px"></a>
-        </div>
-        <div class="container-fluid float-left" style="width: 6%;  height: 2.1vw; border-radius: 0px;">
-            <a href="" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/sources/datasource-owid.png') }}" height="30px"></a>
-        </div>
-        <div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 12%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:-20px">
-            <p style="margin-top:0.15vw">Funding Sources</p>
-        </div>
+        <a href="https://www.bts.gov/" target="_blank"><img src="{{ url_for('static', filename='images/sources/bts.png') }}" height="30px"></a>
+        <a href="https://www.cdc.gov/" target="_blank"><img src="{{ url_for('static', filename='images/sources/cdc.png') }}" height="30px"></a>
+        <a href="https://datasetsearch.research.google.com/" target="_blank"><img src="{{ url_for('static', filename='images/sources/google.png') }}" height="30px"></a>
+        <a href="https://ourworldindata.org/" target="_blank"><img src="{{ url_for('static', filename='images/sources/owid.png') }}" height="30px"></a>
+        <a href="https://github.com/michadenheijer/pynytimes" target="_blank"><img src="{{ url_for('static', filename='images/sources/nyt.png') }}" height="30px"></a>
 
-        <div class="container-fluid float-left" style="width: 6%;  height: 2.2vw; border-radius: 0px;">		
-            <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1955798&HistoricalAwards=false" target="_blank"><img src="{{ url_for('static', filename='web-images/homepage/nsf-logo-v2.png') }}" height="40px" style="margin-top:-5px; margin-left:-20px"></a>
+        <div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: max-content; height: 30px; background-color:#FFF7DD; margin-left: 100px">
+            <p style="margin:auto">Funding Sources</p>
         </div>
+        <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1955798&HistoricalAwards=false" target="_blank"><img src="{{ url_for('static', filename='images/nsf-logo.png') }}" height="30px"></a>
         
-        <div class="border border-dark card text-light bg-secondary container-fluid float-left" style="width: 12%;  height: 2.3vw; border-radius: 0px; background-color:#FFF7DD; margin-left:10px">
-            <p style="margin-top:0.15vw">Visitor Count</p>
-        </div>
-
-        <div class="container-fluid float-left" style="width: 6%;  height: 2.2vw; border-radius: 0px;">		
-            <!-- Start of WebFreeCounter Code -->
-            <a href="https://www.webfreecounter.com/" target="_blank"><img src="https://www.webfreecounter.com/hit.php?id=gfccca&nd=6&style=31" border="0" alt="hit counter"></a>
-            <!-- End of WebFreeCounter Code -->
-        </div>
-
-        <div class="card container-fluid float-left" style="width: 11%;  height: 2.3vw; border-radius: 0px; border-color: #FFFFFF; margin-left:100px; margin-top:-5px">
+        <div class="card container-fluid float-right" style="width: max-content;  height: 30px; border-color: #FFFFFF; margin-left:100px">
             <button type="button" class="btn btn-info" onclick="window.open('mailto:itlab.cse.uta@gmail.com')">Feedback</button>
         </div>
       </div>
-      <hr class="" color="black" style="height: 0px; margin-bottom: 0; margin-top: 0vw;"/>
       
-      <style> #personal-links a { text-decoration: none; color: white; } </style>
+      <style> #personal-links a { text-decoration: none; color: white; padding: 0 5px; } </style>
       <div style="background-color:#002463;" class="p-2 container-fluid" style="font-size:1.1vw">
         <p id='personal-links' class="float-left text-light">
           <a href="https://www.linkedin.com/in/abhishek-santra/" target="_blank">Abhishek Santra</a> | 
@@ -166,7 +98,7 @@
           <a href="http://itlab.uta.edu/index.html" target="_blank">Sharma Chakravarthy</a> | 
           <a href="https://github.com/JacobFV" target="_blank">Jacob Valdez</a> | 
           <a href="https://github.com/banditsbeware" target='_blank'>David Rademacher</a> |
-          <a href="mailto:itlab.cse.uta@gmail.com" target="_blank"><img src="{{url_for('static', filename='web-images/homepage/email.png')}}" height=17px></a></p>
+          <a href="mailto:itlab.cse.uta@gmail.com" target="_blank"><img src="{{url_for('static', filename='images/email.png')}}" height=17px></a></p>
         <p class="float-right text-light">&copy; 2021 The University of Texas at Arlington </p>
         <br/>
       </div>

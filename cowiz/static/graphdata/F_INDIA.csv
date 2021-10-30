@@ -1,0 +1,30 @@
+new_case,New Cases
+new_death,New Deaths
+Recovered,New Recoveries
+Total_Confirmed,Total Cases
+Total_Deceased,Total Deaths
+Total_Recovered,Total Recovered
+Total_Tested,Total Tests
+Total_Confirmed_per10000,Total Cases / 10000 State Population
+Total_Deceased_per10000,Total Deaths / 10000 State Population
+Total_Confirmed_per100SqKm,Total Cases / 100 Sq. Km. State Land Area
+Total_Deceased_per100SqKm,Total Deaths / 100 Sq. Km. State Land Area
+First_Dose_Administered,People Partially Vaccinated (1 Dose)
+Second_Dose_Administered,People Fully Vaccinated (All Doses)
+Partial_Vaccination_per100,People Partially Vaccinated / 100 (1 Dose)
+Full_Vaccination_per100,People Fully Vaccinated / 100 (All Doses)
+Male_Vaccinated,Vaccination Category: Males
+Female_Vaccinated,Vaccination Category: Females
+Transgender_Vaccinated,Vaccination Category: Transgenders
+18-45_Age,Vaccination Category: 18 - 45 Years
+45-60_Age,Vaccination Category: 45 - 60 Years
+60up_Age,Vaccination Category: 60+ Years
+Total_Covaxin_Administered,Vaccine Type: Total Covaxin Administered
+Total_CoviShield_Administered,Vaccine Type: Total CoviShield Administered
+Total_SputnikV_Administered,Vaccine Type: Total SputnikV Administered
+retail_and_recreation_percent_change_from_baseline,Mobility %Change: Retail/Recreation
+grocery_and_pharmacy_percent_change_from_baseline,Mobility %Change: Grocery and Pharmacy
+parks_percent_change_from_baseline,Mobility %Change: Parks
+transit_stations_percent_change_from_baseline,Mobility %Change: Transit Stations
+workplaces_percent_change_from_baseline,Mobility %Change: Workplaces
+residential_percent_change_from_baseline,Mobility %Change: Residential Areas

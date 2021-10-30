@@ -1,22 +1,102 @@
 {% extends "root.html" %}
 
 {% block title %}Feature Comparison{% endblock %}
+{% block banner_link %}{{ url_for('static', filename='images/graph-banner.png') }}{% endblock %}
 
 {% block main %}
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+<style>
+  .checkbox-menu { top: inherit; left: auto; max-height: 500px; overflow-y: scroll; }
+  .checkbox-menu li label {
+      display: block;
+      padding: 3px 10px;
+      clear: both;
+      font-weight: normal;
+      line-height: 1.42857143;
+      color: #333;
+      white-space: nowrap;
+      margin:0;
+  }
+  .checkbox-menu li input {
+      margin: 0px 5px;
+      top: 2px;
+      position: relative;
+  }
+  .checkbox-menu li.active label {
+      background-color: #cbcbff;
+      font-weight:bold;
+  }
+  .checkbox-menu li label:hover,
+  .checkbox-menu li label:focus { background-color: #f5f5f5; }
+  .checkbox-menu li.active label:hover,
+  .checkbox-menu li.active label:focus { background-color: #b8b8ff; }
+  #SR { pointer-events: none; width: 600px; float: left; overflow: hidden }
+  form > * { float: left; margin: 10px }
+</style>
+
+<script defer>
+  $(document).on('click', '.allow-focus', function (e) { e.stopPropagation(); });
+
+  const countRegions = () => {
+    let chkd = $('input.region:checked');
+
+    if (chkd.length > 0) {
+      $('#submit').prop('disabled', false);
+      $('#SR').text(chkd.toArray().map(e => e.id).join(', '));
+      $('#SR').show(200);
+    } else {
+      $('#submit').prop('disabled', true);
+      $('#SR').hide(200);
+    }
+
+    if (chkd.length == 5) 
+      $('input.region:not(:checked)').prop('disabled', true);
+    else 
+      $('input.region:not(:checked)').prop('disabled', false);
+  }
+</script>
+
+<!-- <div class="container-fluid bg-secondary"> -->
+<div class="bg-secondary" style='padding: 20px'>
+  <form class="container-fluid" action="/graph/results/{{ locale }}" method="POST" novalidate>
+
+    <button class="card btn btn-light dropdown-toggle m-2" type="button" style='float:left' 
+      id="regionDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> Select regions...  </button>
+    <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="regionDropDown">
+      {% for r in regions %}
+      <li><label><input class='region' id="{{ r }}" name="{{ r }}" type="checkbox" value="{{ r }}" onchange="countRegions()">{{ r }}</label></li>
+      {% endfor %}
+    </ul>
+    
+    <select id="feature1" class="card btn btn-light m-2" name="feature1">
+      {% for f in features %} <option id='{{ f }}' value='{{ f }}'>{{ features[f] }}</option> {% endfor %}
+    </select>
+
+    <select id="feature2" class="card btn btn-light m-2" name="feature2">
+      {% for f in features %} <option id='{{ f }}' value='{{ f }}'>{{ features[f] }}</option> {% endfor %}
+    </select>
+    
+    <input id="submit" class="btn btn-light m-2" type="submit" value="Submit" disabled>
+    <label id='SR' class='btn btn-light m-2' style='display:none'></label>
+    
+  </form>
+</div>
+
 {% if data %} <!-- if the page is being loaded with graph data, generate graphs -->
 
-<button style='float: left; margin: 20px' onclick='window.open("/graph", "_self")'>&larr; New Query</button>
 <div id='dash'></div>
 
-<script src="{{ url_for('static', filename='graph.js') }}"></script>
+<script src="{{ url_for('static', filename='graphFunctions.js') }}"></script>
 
 <!-- this script unpacks data from the server, builds the Graph object, and graphs the data -->
 <script type='text/javascript'>
 
   let data = JSON.parse('{{ data|safe }}');
  
-  let db = new Dash('dash', 500, 400, 15, `{{ feature1 }}`, `{{ feature2 }}`);
+  let db = new Dash('dash', $('main').width(), `{{ feature1 }}`, `{{ feature2 }}`);
 
   // this assumes that all datasets cover the same time range (they will all be plotted
   // left-aligned with the horizontally 'widest' dataset)
@@ -47,34 +127,6 @@
 
 </script>
 
-{% else %} <!-- if data is not present, provide a form for the user to request data -->
-
-<div class="container-fluid ">
-  <div class="card-deck bg-secondary p-3">
-    <form class="container-fluid" action="/graph/animate" method="POST" novalidate>
-      <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Select regions...  </button>
-
-      <div class="dropdown-menu" style='max-height: 400px; overflow-y: scroll'>
-        {% for r in regions %}
-        <input id="{{ r }}" name="{{ r }}" class="m-1" type="checkbox" value="{{ r }}" onclick="countStates(id, value); enableSubmit(id);">{{ r }}<br> 
-        {% endfor %}
-      </div>
-      
-      <select id="feature1" class="card btn btn-light m-2" name="feature1" onchange="enableSubmit(id);">
-        {% for f in features %} <option id = '{{ f }}' value = '{{ f }}'>{{ features[f] }}</option> {% endfor %}
-      </select>
-
-      <select id="feature2" class="card btn btn-light m-2" name="feature2" onchange="enableSubmit(id);">
-        {% for f in features %} <option id='{{ f }}' value='{{ f }}'>{{ features[f] }}</option> {% endfor %}
-      </select>
-      
-      <input id="submit" class="btn btn-light m-2" type="submit" value ="Submit">
-    </form>
-  </div>
-</div>
-
 {% endif %}
-
-<div style='height:100px'></div>
 
 {% endblock %}

@@ -1,7 +1,8 @@
-#!/usr/bin/python3.6
 from datetime import datetime as dt
 from datetime import timedelta
 from pynytimes import NYTAPI
+from os import getenv
+from dotenv import load_dotenv; load_dotenv()
 
 date_print_format = '%b %d, %Y'
 
@@ -19,9 +20,7 @@ search_options = {
 # return a list of NYT articles about Covid from the last six weeks
 def covid_news():
 
-  # TODO: read key from environment variable 
-  # API keys should not be committed to a public repository
-  nyt = NYTAPI("wbWOIDwmGPWGQALhXbfC3BDK3EMtFBMA")
+  nyt = NYTAPI(getenv('NYTAPI_KEY'))
 
   endDate   = dt.now()
   beginDate = endDate - timedelta(weeks = 6)
