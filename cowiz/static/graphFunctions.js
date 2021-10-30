@@ -42,7 +42,6 @@ let Dash = class {
       'user-select': 'none'
     });
 
-    this.container.append(`<span id='${divID}-legend' style='grid-row: 1; grid-column: 1 / 3'>---Legend---</span>`);
     this.container.append(`<span id='${divID}-title1' style='grid-row: 2; grid-column: 1'>${title1}</span>`);
     this.container.append(`<span id='${divID}-title2' style='grid-row: 2; grid-column: 2'>${title2}</span>`);
     this.container.append(`<div id='${divID}lg' class='lift noscroll' style='grid-row: 3; grid-column: 1'></div>`);
@@ -112,12 +111,12 @@ let Dash = class {
   set xlbl(x) { this._xlbl = x };
   get xlbl() { return this._xlbl; }
 
-  drawData() {
+  drawData(xoff=0) {
     this.clear();
     let f1 = this.floor(1), h1 = this.dataHeight(1), 
         f2 = this.floor(2), h2 = this.dataHeight(2);
-    this.LG.grid(this.xlbl, f1, f1 + h1, Math.abs(f1 * this.ch / h1)); 
-    this.RG.grid(this.xlbl, f2, f2 + h2, Math.abs(f2 * this.ch / h2)); 
+    this.LG.grid(this.xlbl, xoff, f1, f1 + h1, Math.abs(f1 * this.ch / h1)); 
+    this.RG.grid(this.xlbl, xoff, f2, f2 + h2, Math.abs(f2 * this.ch / h2)); 
 
     for (let ds of this.normdata) {
       if (ds.side === 1) this.LG.draw(ds);
@@ -128,8 +127,10 @@ let Dash = class {
 
   // scroll both graphs; `a` expected to be in the range [0, 1]
   scroll(a) {
-    this.LG.div.scrollLeft(a * (this.cw - this.ow));
-    this.RG.div.scrollLeft(a * (this.cw - this.ow));
+    let sp = a * (this.cw - this.ow);
+    this.LG.div.scrollLeft(sp);
+    this.RG.div.scrollLeft(sp);
+    this.drawData(sp);
   }
 
   // the width of the widest dataset
@@ -152,8 +153,8 @@ let Dash = class {
 
   legend(L) {
     let str = '';
-    for (let i of L) { str += `<span style='color:${i[1]}'>${i[0]}</span><br>` }
-    this.container.append(`<span style='grid-row:2; grid-column:4; overflow-y: scroll; display: none'>${str}</span>`);
+    for (let i of L) { str += `<span class='legend-dot' style='background-color:${i[1]}'></span><span>${i[0]}</span>` }
+    this.container.append(`<span style='grid-row: 1; grid-column: 1 / 3'>${str}</span>`);
   }
 }
 
@@ -175,7 +176,8 @@ let Bar = class {
     this.ibar.css({
       'height': `${this.obar.css('height')}`,
       'position': 'absolute',
-      'background': '#ddd'
+      'background': '#ddd',
+      'border-radius': '30%'
     });
 
     this.dib = document.getElementById(`${barID}-ibar`);
@@ -231,7 +233,6 @@ let Graph = class {
 
     // obtain the new canvas's context
     this.ctx = this.cvs[0].getContext('2d');
-    this.ctx.strokeWidth = 3;
   }
 
   // plot a dataset
@@ -239,6 +240,7 @@ let Graph = class {
     if (!ds.graphed) {
       this.ctx.strokeStyle = ds.color;
       this.ctx.beginPath();
+      this.ctx.strokeWidth = 10;
       this.ctx.moveTo(ds.x[0], this.ch - ds.y[0]);
 
       for (let p = 1; p < ds.n; p++) this.ctx.lineTo(ds.x[p], this.ch - ds.y[p]);
@@ -253,14 +255,14 @@ let Graph = class {
   clear() { this.ctx.clearRect(0, 0, this.cw, this.ch); }
 
   // draw the grid
-  grid(xlbl, ymin, ymax, zero) {
+  grid(xlbl, xoff, ymin, ymax, zero) {
 
     // number of horizontal gridlines
     let yGrain = 8;
 
     this.ctx.strokeStyle = '#D0D0D0';
-    this.ctx.strokeWidth = 5;
-    this.ctx.font = 'normal 15px monospace';
+    this.ctx.strokeWidth = 1;
+    this.ctx.font = 'bold 16px monospace';
     this.ctx.fillStyle = 'grey';
 
     let dx = Math.floor(this.cw / xlbl.length);
@@ -273,7 +275,8 @@ let Graph = class {
       this.ctx.moveTo(0, lat);
       this.ctx.lineTo(this.cw, lat)
       this.ctx.stroke();
-      this.ctx.fillText(ylbl[i], 0, lat);
+      this.ctx.fillStyle = 'black';
+      this.ctx.fillText(ylbl[i], xoff, lat);
     }
 
     for (let i in xlbl) {
