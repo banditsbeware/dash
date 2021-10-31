@@ -9,6 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
 <style>
+  form > * { float: left; margin: 10px }
   .checkbox-menu { top: inherit; left: auto; max-height: 500px; overflow-y: scroll; }
   .checkbox-menu li label {
       display: block;
@@ -20,26 +21,24 @@
       white-space: nowrap;
       margin:0;
   }
-  .checkbox-menu li input {
-      margin: 0px 5px;
-      top: 2px;
-      position: relative;
-  }
-  .checkbox-menu li.active label {
-      background-color: #cbcbff;
-      font-weight:bold;
-  }
+  .checkbox-menu li input { margin: 0px 5px; top: 2px; position: relative; }
+  .checkbox-menu li.active label { background-color: #cbcbff; font-weight:bold; }
   .checkbox-menu li label:hover,
   .checkbox-menu li label:focus { background-color: #f5f5f5; }
   .checkbox-menu li.active label:hover,
   .checkbox-menu li.active label:focus { background-color: #b8b8ff; }
+
   #SR { pointer-events: none; width: 600px; float: left; overflow: hidden }
-  form > * { float: left; margin: 10px }
+  #legend { display: flex; align-content: center; justify-content: center; }
+  #legend span { margin-right: 10px; align-self: center; }
+  .legend-dot { display: inline-block; height: 10px; width: 10px; border-radius: 50%; margin: 0 7px; }
 </style>
 
 <script defer>
+  // keeps the dropdown menu open after the user clicks an item
   $(document).on('click', '.allow-focus', function (e) { e.stopPropagation(); });
 
+  // called each time a list item is clicked
   const countRegions = () => {
     let chkd = $('input.region:checked');
 
@@ -94,6 +93,8 @@
 <!-- this script unpacks data from the server, builds the Graph object, and graphs the data -->
 <script type='text/javascript'>
 
+  let colors = [ '#ba3c7f', '#7d7fb5', '#357a55', '#1a1fba', '#031f10'  ]
+
   let data = JSON.parse('{{ data|safe }}');
  
   let db = new Dash('dash', $('main').width(), `{{ feature1 }}`, `{{ feature2 }}`);
@@ -109,7 +110,7 @@
   // add two datasets to the dashboard per region - for features 1 & 2
   let legend = Array();
   for (let r in data) {
-    let xvals = [], c = randColor();
+    let xvals = [], c = colors.pop();
 
     // factor of 10 helps space out data (i.e. 10px wide per data point)
     for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
@@ -124,6 +125,7 @@
   db.xlbl = xlbl;
   db.legend(legend);
   db.drawData();
+  db.scroll(0);
 
 </script>
 
