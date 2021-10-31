@@ -20,6 +20,8 @@ search_options = {
 # return a list of NYT articles about Covid from the last six weeks
 def covid_news():
 
+  return []  # remove this if you have a working NYT API key
+
   nyt = NYTAPI(getenv('NYTAPI_KEY'))
 
   endDate   = dt.now()

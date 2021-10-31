@@ -227,4 +227,4 @@ function resetDates(id){
     }   
 }
 
-const loadingScreen = (id) => document.getElementById('iframe').src = "{{ url_for('static', filename='loading_screen.html') }}";
+const loadingScreen = (id) => document.getElementById('iframe').src = "static/maps/loading_screen.html";

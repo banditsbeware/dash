@@ -24,6 +24,7 @@ import os
 import subprocess
 
 # Calculate the elapsed time for each check for a map or csv file
+import time
 import timeit
 
 # to lock threads to one at a time
@@ -132,38 +133,40 @@ class map_test() :
           fp.close()
 
           subprocess.call(["cowiz/usmap/csvLayers/csvGenerator"])
-        #print( "csv key: %s doesn't exist" % key ) 
-      #print( "map key: %s doesn't exist" % key )
+          #print( "csv key: %s doesn't exist" % key ) 
+          #print( "map key: %s doesn't exist" % key )
 
-      # Creates a file path for where to store the map html files
-      mapPath = 'cowiz/static/maps/'+ subName
-      # mapPath will become the location of the HTML generated map
-      # previously 'usmap/static/maps/'+ subName
-    
-      # Checks if a directory for the map data set exists
-      # If not, then we create one
-      if not os.path.isdir( mapPath ) :
-        try :
-          os.mkdir( mapPath )
-        except OSError :
-          print ("Command mkdir for directory %s has failed." % mapPath)
+          # Creates a file path for where to store the map html files
+          mapPath = 'cowiz/static/maps/'+ subName
+          # mapPath will become the location of the HTML generated map
+          # previously 'usmap/static/maps/'+ subName
+        
+          print(f"\nstarting to generate map {subName} @ T={time.time_ns()}")
+          # Checks if a directory for the map data set exists
+          # If not, then we create one
+          if not os.path.isdir( mapPath ) :
+            try :
+              os.mkdir( mapPath )
+            except OSError :
+              print ("Command mkdir for directory %s has failed." % mapPath)
 
-      fig = self.generateMap( subName, fName )
+          success = self.generateMap( subName, fName )
 
-      # Add key and value to the HTML hash table 
-      with open( 'cowiz/usmap/maptest/tables/html_table.txt', 'a' ) as fp :
-        if fig is None :
-          fp.write( key + ',' + '../default.html\r\n' )
-        else :
-          fp.write( key + ',' + fName + '.html\r\n' )
+          # Add key and value to the HTML hash table 
+          with open( 'cowiz/usmap/maptest/tables/html_table.txt', 'a' ) as fp :
+            if not success :
+              fp.write( key + ',' + '../default.html\r\n' )
+            else :
+              fp.write( key + ',' + fName + '.html\r\n' )
 
-      fp.close()
+          fp.close()
 
-      # Update the map hash table
-      if fig is None :
-        self.mapHash[key] = ( '../default.html' )
-      else :
-        self.mapHash[key] = ( fName + '.html' )
+          # Update the map hash table
+          if not success :
+            self.mapHash[key] = ( '../default.html' )
+          else :
+            self.mapHash[key] = ( fName + '.html' )
+          print(f"finished generating map {subName} @ T={time.time_ns()}")
 
     return key
 #-------------------------------------------------------------
@@ -189,7 +192,17 @@ class map_test() :
     #   don't want to generate an html file, just use
     #   default.html
     if numLines == 0 :
-      return None
+      return False
+ 
+    # Path to the specific directory the file is stored in 
+    nDir  = ( 'cowiz/static/maps/' + dirName + '/' )
+
+    # Path to where to store the file for the hash table
+    nFile = fName + '.html'
+
+    if os.path.isfile( nDir + nFile ) :
+      print(f"map {nFile} already cached")
+      return True
 
     # We manually insert the CommunityID column in the DataFrame
     #   object so it is compatible with the cholopleth parameter
@@ -268,17 +281,14 @@ class map_test() :
 
     # Displays the figure when program is executed    
     #fig.show()
- 
-    # Path to the specific directory the file is stored in 
-    nDir  = ( 'cowiz/static/maps/' + dirName + '/' )
 
-    # Path to where to store the file for the hash table
-    nFile = fName + '.html'
+    if fig is None:
+      return False
 
     # Creates an html file of the map
     pio.write_html(fig, file= nDir + nFile, auto_open=False)
 
-    return fig
+    return True
 #-------------------------------------------------------------
 
 
