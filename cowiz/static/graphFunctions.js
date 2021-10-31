@@ -16,7 +16,7 @@ let DataSet = (xarr, yarr, side, color) => {
     B: Math.min(...yarr), // bottom y
     T: Math.max(...yarr), // top y
     color: color,
-    graphed: false,
+    show: true,
     side: side
   }
 }
@@ -65,7 +65,7 @@ let Dash = class {
       'box-shadow': '3px 3px 3px 3px gray'
     });
     $(`#${divID} #${divID}b`).css({
-      'width': '100%', 'height': `${1.5 * p}px`,
+      'width': '100%', 'height': `${3 * p}px`,
       'overflow': 'hidden',
     });
     $(`#${divID} div`).css({'position': 'absolute', 'scrollbar-width': 'none'});
@@ -74,11 +74,15 @@ let Dash = class {
     this.LG = new Graph(`${divID}lg`);
     this.RG = new Graph(`${divID}rg`);
     this.B  = new Bar(`${divID}b`);
+
+    this.LG.parent = this;
+    this.RG.parent = this;
     this.B.parent = this;
 
     this.data = [];
     this.normdata = [];
 
+    this.xoff = 0;  // pixels of canvas to the left of the visible window
     this.xvis = 1;  // the portion of the x-axis currently visible
     this.ow   = gw; // outer width always represents 'div' or 'view' width (what user sees)
     this.cw   = gw; // canvas width represents the underlying canvas, which hangs off underneath the div
@@ -111,12 +115,17 @@ let Dash = class {
   set xlbl(x) { this._xlbl = x };
   get xlbl() { return this._xlbl; }
 
-  drawData(xoff=0) {
+  drawData(cx=-1, cy=-1) {
     this.clear();
     let f1 = this.floor(1), h1 = this.dataHeight(1), 
         f2 = this.floor(2), h2 = this.dataHeight(2);
-    this.LG.grid(this.xlbl, xoff, f1, f1 + h1, Math.abs(f1 * this.ch / h1)); 
-    this.RG.grid(this.xlbl, xoff, f2, f2 + h2, Math.abs(f2 * this.ch / h2)); 
+    this.LG.grid(this.xlbl, this.xoff, f1, f1 + h1, Math.abs(f1 * this.ch / h1)); 
+    this.RG.grid(this.xlbl, this.xoff, f2, f2 + h2, Math.abs(f2 * this.ch / h2)); 
+
+    if (cx >= 0 && cy >= 0) {
+      this.LG.crosshair(cx, cy);
+      this.RG.crosshair(cx, cy);
+    }
 
     for (let ds of this.normdata) {
       if (ds.side === 1) this.LG.draw(ds);
@@ -127,10 +136,10 @@ let Dash = class {
 
   // scroll both graphs; `a` expected to be in the range [0, 1]
   scroll(a) {
-    let sp = a * (this.cw - this.ow);
-    this.LG.div.scrollLeft(sp);
-    this.RG.div.scrollLeft(sp);
-    this.drawData(sp);
+    this.xoff = a * (this.cw - this.ow);
+    this.LG.div.scrollLeft(this.xoff);
+    this.RG.div.scrollLeft(this.xoff);
+    this.drawData();
   }
 
   // the width of the widest dataset
@@ -146,15 +155,23 @@ let Dash = class {
 
   // empty all visuals from graphs
   clear() {
-    for (let ds of this.normdata) ds.graphed = false;
     this.LG.clear();
     this.RG.clear();
   }
 
   legend(L) {
-    let str = '';
-    for (let i of L) { str += `<span class='legend-dot' style='background-color:${i[1]}'></span><span>${i[0]}</span>` }
-    this.container.append(`<span style='grid-row: 1; grid-column: 1 / 3'>${str}</span>`);
+    let lg = $(`<span style='grid-row: 1; grid-column: 1 / 3'></span>`);
+    for (let i of L) { 
+      let lgi = $(`<span></span>`);
+      lgi.append(`<span class='legend-dot' style='background-color:${i[1]}'></span>`);
+      lgi.append(`<span>${i[0]}</span>`);
+      lgi.on('click', (e) => {
+        this.normdata.filter(d => d.color === i[1]).map(d => d.show = !d.show);
+        this.drawData();
+      });
+      lg.append(lgi);
+    }
+    this.container.append(lg);
   }
 }
 
@@ -176,8 +193,7 @@ let Bar = class {
     this.ibar.css({
       'height': `${this.obar.css('height')}`,
       'position': 'absolute',
-      'background': '#ddd',
-      'border-radius': '30%'
+      'background': '#ddd'
     });
 
     this.dib = document.getElementById(`${barID}-ibar`);
@@ -216,9 +232,9 @@ let Bar = class {
 let Graph = class {
 
   constructor(graphID) {
+    this.parent;
     this.id = graphID;
 
-    // select the <div>
     this.div = $(`#${graphID}`);
     this.div.css('overflow', 'hidden');
 
@@ -230,6 +246,8 @@ let Graph = class {
 
     // create internal <canvas> object
     this.cvs = $(`#${graphID} #${graphID}-cvs`);
+    this.cvs.on('mousemove', (e) => this.parent.drawData(e.offsetX, e.offsetY));
+    this.cvs.on('mouseleave', () => this.parent.drawData());
 
     // obtain the new canvas's context
     this.ctx = this.cvs[0].getContext('2d');
@@ -237,22 +255,27 @@ let Graph = class {
 
   // plot a dataset
   draw(ds) {
-    if (!ds.graphed) {
+    if (ds.show) {
       this.ctx.strokeStyle = ds.color;
       this.ctx.beginPath();
-      this.ctx.strokeWidth = 10;
       this.ctx.moveTo(ds.x[0], this.ch - ds.y[0]);
 
       for (let p = 1; p < ds.n; p++) this.ctx.lineTo(ds.x[p], this.ch - ds.y[p]);
 
       this.ctx.stroke();
-      ds.graphed = true;
     }
   }
 
   setw(w) { this.cw = w; this.cvs.attr('width', w); }
 
   clear() { this.ctx.clearRect(0, 0, this.cw, this.ch); }
+
+  crosshair(x, y) {
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, y); this.ctx.lineTo(this.cw, y);
+    this.ctx.moveTo(x, 0); this.ctx.lineTo(x, this.ch);
+    this.ctx.stroke();
+  }
 
   // draw the grid
   grid(xlbl, xoff, ymin, ymax, zero) {
