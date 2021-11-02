@@ -29,7 +29,8 @@ import timeit
 
 # to lock threads to one at a time
 import threading
-lock = threading.Lock()
+reader_lock = threading.Lock()
+generator_lock = threading.Lock()
 
 class map_test() :
   # Constructor
@@ -127,7 +128,7 @@ class map_test() :
         nDate = self.fixDate(options[2])
         allLines[5] = (nDate + '\r\n')     # Update new second date
 
-        with lock:
+        with generator_lock:
           with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'w' ) as fp :
             fp.writelines(allLines)
           fp.close()
@@ -360,8 +361,9 @@ class map_test() :
           
             fp.close()
 
-    with open( 'cowiz/usmap/maptest/tables/csv_table.txt', 'r' ) as fp :
-      lines = fp.read().replace( '\r', '' ).split( '\n' )
+    with reader_lock:
+      with open( 'cowiz/usmap/maptest/tables/csv_table.txt', 'r' ) as fp :
+        lines = fp.read().replace( '\r', '' ).split( '\n' )
 
     # Checks if the file is not empty
     if lines[0] != '' :
