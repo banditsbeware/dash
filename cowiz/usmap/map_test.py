@@ -115,59 +115,94 @@ class map_test() :
       #print( "map key: %s does exist" % key )
       #fName = './v2/static/maps/' + subName + '/' + self.mapHash[key]
     #else :
-      if csvHash.get( key ) == None :
+      #if csvHash.get( key ) == None :
+      while self.mapHash.get ( key ) == None :
         # Rewrite the configuration file with the csv information
         #   we want to read in
-        with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'r' ) as fp :
-          allLines = fp.readlines()
-        fp.close()
-
-        allLines[1] = (str(options[0])+'\r\n')  # Update new interval choice
-        nDate = self.fixDate(options[1])
-        allLines[3] = (nDate + '\r\n')     # Update new start date
-        nDate = self.fixDate(options[2])
-        allLines[5] = (nDate + '\r\n')     # Update new second date
-
         with generator_lock:
-          with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'w' ) as fp :
-            fp.writelines(allLines)
-          fp.close()
+          # Maybe we should escape the loop
+          with open('./debug/lock.txt', 'r') as f:
+            f.read()
+          with open('./debug/lock.txt', 'a') as f:
+            f.write('\n' + f'Maphash {self.mapHash}' + '\n')
+          if key not in self.mapHash:
+          
+            ## print a statement that we are entering the critical section to a debug file /debug/lock.txt
+            with open('./debug/lock.txt', 'r') as f:
+              f.read()
+            with open('./debug/lock.txt', 'a') as f:
+              f.write('\n' + f'Entering critical section for key {key}' + '\n')
+            with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'r' ) as fp :
+              allLines = fp.readlines()
+            fp.close()
 
-          subprocess.call(["cowiz/usmap/csvLayers/csvGenerator"])
-          #print( "csv key: %s doesn't exist" % key ) 
-          #print( "map key: %s doesn't exist" % key )
+            allLines[1] = (str(options[0])+'\r\n')  # Update new interval choice
+            nDate = self.fixDate(options[1])
+            allLines[3] = (nDate + '\r\n')     # Update new start date
+            nDate = self.fixDate(options[2])
+            allLines[5] = (nDate + '\r\n')     # Update new second date
 
-          # Creates a file path for where to store the map html files
-          mapPath = 'cowiz/static/maps/'+ subName
-          # mapPath will become the location of the HTML generated map
-          # previously 'usmap/static/maps/'+ subName
-        
-          print(f"\nstarting to generate map {subName} @ T={time.time_ns()}")
-          # Checks if a directory for the map data set exists
-          # If not, then we create one
-          if not os.path.isdir( mapPath ) :
-            try :
-              os.mkdir( mapPath )
-            except OSError :
-              print ("Command mkdir for directory %s has failed." % mapPath)
+            time.sleep(5)
 
-          success = self.generateMap( subName, fName )
+            with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'w' ) as fp :
+              fp.writelines(allLines)
+            fp.close()
 
-          # Add key and value to the HTML hash table 
-          with open( 'cowiz/usmap/maptest/tables/html_table.txt', 'a' ) as fp :
+            subprocess.call(["cowiz/usmap/csvLayers/csvGenerator"])
+            #print( "csv key: %s doesn't exist" % key ) 
+            #print( "map key: %s doesn't exist" % key )
+
+            # Creates a file path for where to store the map html files
+            mapPath = 'cowiz/static/maps/'+ subName
+            # mapPath will become the location of the HTML generated map
+            # previously 'usmap/static/maps/'+ subName
+          
+            print(f"\nstarting to generate map {subName} @ T={time.time_ns()}")
+            # Checks if a directory for the map data set exists
+            # If not, then we create one
+            if not os.path.isdir( mapPath ) :
+              try :
+                os.mkdir( mapPath )
+              except OSError :
+                print ("Command mkdir for directory %s has failed." % mapPath)
+
+            success = self.generateMap( subName, fName )
+
+            # Add key and value to the HTML hash table 
+            with open( 'cowiz/usmap/maptest/tables/html_table.txt', 'a' ) as fp :
+              if not success :
+                fp.write( key + ',' + '../default.html\r\n' )
+              else :
+                fp.write( key + ',' + fName + '.html\r\n' )
+
+            fp.close()
+
+            # Update the map hash table
             if not success :
-              fp.write( key + ',' + '../default.html\r\n' )
+              self.mapHash[key] = ( '../default.html' )
             else :
-              fp.write( key + ',' + fName + '.html\r\n' )
+              self.mapHash[key] = ( fName + '.html' )
 
-          fp.close()
+            with open('./debug/lock.txt', 'r') as f:
+              f.read()
+            with open('./debug/lock.txt', 'a') as f:
+              f.write('\n' + f'inserted into mapHash' + '\n')
 
-          # Update the map hash table
-          if not success :
-            self.mapHash[key] = ( '../default.html' )
-          else :
-            self.mapHash[key] = ( fName + '.html' )
-          print(f"finished generating map {subName} @ T={time.time_ns()}")
+            print(f"finished generating map {subName} @ T={time.time_ns()}")
+            # in the critical section
+            with open('./debug/lock.txt', 'r') as f:
+              f.read()
+            with open('./debug/lock.txt', 'a') as f:
+              f.write('\n' + f'Leaving critical section for key {key}' + '\n')
+          else:
+            break
+          # not in critical section
+
+
+      else :
+        pass
+    else :
+      pass
 
     return key
 #-------------------------------------------------------------
