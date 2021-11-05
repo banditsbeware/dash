@@ -79,7 +79,7 @@
     </select>
     
     <input id="submit" class="btn btn-light m-2" type="submit" value="Submit" disabled>
-    <label id='SR' class='btn btn-light m-2' style='display:none'></label>
+    <label id='SR' class='btn btn-light m-2' style='margin: auto; display:none'></label>
     
   </form>
 </div>
@@ -93,39 +93,46 @@
 <!-- this script unpacks data from the server, builds the Graph object, and graphs the data -->
 <script type='text/javascript'>
 
-  let colors = [ '#ba3c7f', '#7d7fb5', '#357a55', '#1a1fba', '#031f10'  ]
-
   let data = JSON.parse('{{ data|safe }}');
  
-  let db = new Dash('dash', $('main').width(), `{{ feature1 }}`, `{{ feature2 }}`);
+  function makeGraph() {
 
-  // this assumes that all datasets cover the same time range (they will all be plotted
-  // left-aligned with the horizontally 'widest' dataset)
-  let xlbl = new Set();
-  for (let r in data) 
-    for (let day of data[r].t) xlbl.add(day.slice(0,7));
-  xlbl = Array(... xlbl).sort()
-    .map(m => `${monthNames[parseInt(m.slice(5))-1]} ${m.slice(0,4)}`);
+    let colors = [ '#ba3c7f', '#7d7fb5', '#357a55', '#1a1fba', '#031f10'  ]
 
-  // add two datasets to the dashboard per region - for features 1 & 2
-  let legend = Array();
-  for (let r in data) {
-    let xvals = [], c = colors.pop();
+    let db = new Dash('dash', $('main').width(), `{{ feature1 }}`, `{{ feature2 }}`);
 
-    // factor of 10 helps space out data (i.e. 10px wide per data point)
-    for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
+    // this assumes that all datasets cover the same time range (they will all be plotted
+    // left-aligned with the horizontally 'widest' dataset)
+    let xlbl = new Set();
+    for (let r in data) 
+      for (let day of data[r].t) xlbl.add(day.slice(0,7));
+    xlbl = Array(... xlbl).sort()
+      .map(m => `${monthNames[parseInt(m.slice(5))-1]} ${m.slice(0,4)}`);
 
-    // exclude string feature names from datasets
-    db.push(DataSet( xvals, data[r]['f1'], 1, c ));
-    db.push(DataSet( xvals, data[r]['f2'], 2, c ));
+    // add two datasets to the dashboard per region - for features 1 & 2
+    let legend = Array();
+    for (let r in data) {
+      let xvals = [], c = colors.pop();
 
-    legend.push([r, c]);
+      // factor of 10 helps space out data (i.e. 10px wide per data point)
+      for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
+
+      // exclude string feature names from datasets
+      db.push(DataSet( xvals, data[r]['f1'], 1, c ));
+      db.push(DataSet( xvals, data[r]['f2'], 2, c ));
+
+      legend.push([r, c]);
+    }
+    
+    db.xlbl = xlbl;
+    db.legend(legend);
+    db.drawData();
+    db.scroll(0);
   }
-  
-  db.xlbl = xlbl;
-  db.legend(legend);
-  db.drawData();
-  db.scroll(0);
+
+  makeGraph();
+
+  $(window).on('resize', () => { $('#dash').empty(); makeGraph(); });
 
 </script>
 

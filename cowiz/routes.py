@@ -61,7 +61,6 @@ def usmap():
 def graph(locale):
   return render_template("graph.html",
           who      = who(),
-          news     = covid_news(),
           locale   = locale,
           regions  = G.load_regions(locale),
           features = G.load_features(locale))
@@ -74,7 +73,6 @@ def animate(locale):
 
   return render_template("graph.html", 
     who      = who(),
-    news     = covid_news(),
     locale   = locale,
     regions  = G.load_regions(locale),
     features = G.load_features(locale),
