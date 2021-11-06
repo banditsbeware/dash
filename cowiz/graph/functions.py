@@ -19,8 +19,8 @@ def load_features(locale):
   # if a feature name mapping exists, convert to preferred names
   if exists(path(f'F_{locale}')):
     with open(path(f'F_{locale}'), 'r') as f: 
-      mapping = dict( [ ( ln.split(',')[0], ln.split(',')[1] ) for ln in f.readlines()] )
-    return dict( enumerate( [ mapping[h] for h in header if h in mapping ] ) ) 
+      mapping = dict( [ ( ln.split(',')[0], ln.split(',')[1][:-1] ) for ln in f.readlines()] )
+    return dict([(i, mapping[header[i]]) for i in range(len(header)) if header[i] in mapping]) 
   else: 
     return dict( enumerate ( header ) )
 
@@ -46,8 +46,8 @@ def get_curves(locale, regions, f1, f2):
       if r in regions:
         l = line.split(',')
         C[r]['t' ].append(l[1]) # date
-        C[r]['f1'].append(float(l[f1+2]) if l[f1+2] else 0) # feature 1 data point
-        C[r]['f2'].append(float(l[f2+2]) if l[f2+2] else 0) # feature 2 data point
+        C[r]['f1'].append(float(l[f1]) if l[f1] else 0) # feature 1 data point
+        C[r]['f2'].append(float(l[f2]) if l[f2] else 0) # feature 2 data point
 
   return C
 
