@@ -94,12 +94,13 @@
 <script type='text/javascript'>
 
   let data = JSON.parse('{{ data|safe }}');
+  var db;
  
   function makeGraph() {
 
-    let colors = [ '#ba3c7f', '#7d7fb5', '#357a55', '#1a1fba', '#031f10'  ]
+    let colors = ['rgb(31, 119, 180)', 'rgb(255, 127, 14)', 'rgb(148, 103, 189)', 'rgb(140, 86, 75)', 'rgb(188, 189, 34)']
 
-    let db = new Dash('dash', $('main').width(), `{{ feature1 }}`, `{{ feature2 }}`);
+    db = new Dash('dash', $('main').width(), `{{ feature1 }}`, `{{ feature2 }}`);
 
     // this assumes that all datasets cover the same time range (they will all be plotted
     // left-aligned with the horizontally 'widest' dataset)
@@ -118,15 +119,14 @@
       for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
 
       // exclude string feature names from datasets
-      db.push(DataSet( xvals, data[r]['f1'], 1, c ));
-      db.push(DataSet( xvals, data[r]['f2'], 2, c ));
+      db.push(DataSet( xvals, data[r]['f1'], 1, r, c ));
+      db.push(DataSet( xvals, data[r]['f2'], 2, r, c ));
 
       legend.push([r, c]);
     }
     
     db.xlbl = xlbl;
     db.legend(legend);
-    db.drawData();
     db.scroll(0);
   }
 

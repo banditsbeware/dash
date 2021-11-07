@@ -1,5 +1,5 @@
 // factory function for DataSet objects
-let DataSet = (xarr, yarr, side, color) => {
+let DataSet = (xarr, yarr, side, name, color) => {
 
   if (xarr.length !== yarr.length)
     throw 'DataSet error: x & y lists are different sizes';
@@ -15,6 +15,7 @@ let DataSet = (xarr, yarr, side, color) => {
     R: Math.max(...xarr), // right x
     B: Math.min(...yarr), // bottom y
     T: Math.max(...yarr), // top y
+    name: name,
     color: color,
     show: true,
     side: side
@@ -23,11 +24,11 @@ let DataSet = (xarr, yarr, side, color) => {
 
 let Dash = class {
 
-  constructor(divID, vw, title1, title2, legend) {
+  constructor(divID, vw, title1, title2) {
 
-    let p = 10;               // padding
-    let gw = (vw - p)/2;      // graph width
-    let gh = 0.75 * gw;       // graph height
+    let p = 10;                              // padding
+    let gw = (vw - p)/2;                     // graph width
+    let gh = Math.min(0.75 * gw, 600);       // graph height
 
     this.container = $(`#${divID}`);
     this.container.css({
@@ -44,8 +45,8 @@ let Dash = class {
 
     this.container.append(`<span id='${divID}-title1' style='grid-row: 2; grid-column: 1'>${title1}</span>`);
     this.container.append(`<span id='${divID}-title2' style='grid-row: 2; grid-column: 2'>${title2}</span>`);
-    this.container.append(`<div id='${divID}lg' class='lift noscroll' style='grid-row: 3; grid-column: 1'></div>`);
-    this.container.append(`<div id='${divID}rg' class='lift noscroll' style='grid-row: 3; grid-column: 2'></div>`);
+    this.container.append(`<div id='${divID}lg' style='grid-row: 3; grid-column: 1'></div>`);
+    this.container.append(`<div id='${divID}rg' style='grid-row: 3; grid-column: 2'></div>`);
     this.container.append(`<div id='${divID}b' style='grid-row: 5; grid-column: 1 / 3'></div>`);
 
     $(`#${divID} span`).css({
@@ -56,13 +57,12 @@ let Dash = class {
     $(`#${divID} #${divID}lg`).css({
       'width': `${gw}px`, 'height': `${gh}px`,
       'overflow': 'hidden',
-      'max-width': '100%',
-      'box-shadow': '3px 3px 3px 3px gray'
+      'cursor': 'none'
     });
     $(`#${divID} #${divID}rg`).css({
       'width': `${gw}px`, 'height': `${gh}px`,
       'overflow': 'hidden',
-      'box-shadow': '3px 3px 3px 3px gray'
+      'cursor': 'none'
     });
     $(`#${divID} #${divID}b`).css({
       'width': '100%', 'height': `${3 * p}px`,
@@ -75,8 +75,8 @@ let Dash = class {
     this.RG = new Graph(`${divID}rg`);
     this.B  = new Bar(`${divID}b`);
 
-    this.LG.parent = this;
-    this.RG.parent = this;
+    this.LG.parent = this; this.LG.ownSide = 1;
+    this.RG.parent = this; this.RG.ownSide = 2;
     this.B.parent = this;
 
     this.data = [];
@@ -87,6 +87,12 @@ let Dash = class {
     this.ow   = gw; // outer width always represents 'div' or 'view' width (what user sees)
     this.cw   = gw; // canvas width represents the underlying canvas, which hangs off underneath the div
     this.ch   = gh; // the actual height of the canvas
+
+    this.cx = -1;   // mouse position relative to graph
+    this.cy = -1;
+
+    this.mouseIn = false;
+
   }
 
   // push a dataset onto the dashboard
@@ -107,30 +113,64 @@ let Dash = class {
     // construct normalized dataset y' = <canvas height> * (y - min) / (max - min)
     this.normdata = [];
     for (let d of this.data) {
-      let normy = d.y.map( y => this.ch * (y - this.floor(d.side)) / this.dataHeight(d.side));
-      this.normdata.push( DataSet( d.x, normy, d.side, d.color ) );
+      let f = this.floor(d.side), h = this.dataHeight(d.side);
+      let normy = d.y.map( y => Math.floor(this.ch * (y - f) / h));
+      this.normdata.push( DataSet( d.x, normy, d.side, d.name, d.color ) );
     }
   }
 
   set xlbl(x) { this._xlbl = x };
   get xlbl() { return this._xlbl; }
 
-  drawData(cx=-1, cy=-1) {
+  update() {
     this.clear();
     let f1 = this.floor(1), h1 = this.dataHeight(1), 
         f2 = this.floor(2), h2 = this.dataHeight(2);
+
     this.LG.grid(this.xlbl, this.xoff, f1, f1 + h1, Math.abs(f1 * this.ch / h1)); 
     this.RG.grid(this.xlbl, this.xoff, f2, f2 + h2, Math.abs(f2 * this.ch / h2)); 
-
-    if (cx >= 0 && cy >= 0) {
-      this.LG.crosshair(cx, cy);
-      this.RG.crosshair(cx, cy);
-    }
 
     for (let ds of this.normdata) {
       if (ds.side === 1) this.LG.draw(ds);
       if (ds.side === 2) this.RG.draw(ds);
     }
+
+    if (this.cx >= 0 && this.cy >= 0) {
+      this.LG.crosshair(this.cx, this.cy);
+      this.RG.crosshair(this.cx, this.cy);
+
+      // find the point out of all datasets that is closest to mouse position
+      let m = this.ch**2, v, di, dj;
+      for (let i = 0; i < this.data.length; i++) {
+
+        if (this.data[i].side == this.mouseIn && this.normdata[i].show) {
+          let nd = this.normdata[i];
+
+          for (let j = 0; j < nd.n; j++) {
+            v = Math.sqrt((this.cx - nd.x[j])**2 + (this.cy - this.ch + nd.y[j])**2);
+            if (v < m) { m = v; di = i; dj = j; }
+          }
+        }
+      }
+
+      if (m < 50) {
+        let d = this.data[di], nd = this.normdata[di];
+        let lbl = { 
+          name: d.name, 
+          date: null, 
+          value: d.y[dj].toLocaleString('en-US'), 
+          color: d.color,
+          p: { 
+            x0: d.x[dj], y0: this.ch-nd.y[dj],
+            x1: this.cx, y1: this.cy
+          } 
+        }
+
+        if (this.mouseIn == 1) { this.LG.label(lbl); }
+        if (this.mouseIn == 2) { this.RG.label(lbl); }
+      }
+    }
+
     this.B.setWidth();
   }
 
@@ -139,14 +179,14 @@ let Dash = class {
     this.xoff = a * (this.cw - this.ow);
     this.LG.div.scrollLeft(this.xoff);
     this.RG.div.scrollLeft(this.xoff);
-    this.drawData();
+    this.update();
   }
 
   // the width of the widest dataset
   dataWidth = () => Math.ceil(Math.max(... this.data.map(d => d.R - d.L)));
 
   // the height of the tallest dataset on `side` (1 or 2)
-  dataHeight = (side) => Math.ceil(Math.max(... 
+  dataHeight = (side) => intCeil(1.1*Math.max(... 
     this.data.filter(d => d.side === side).map(d => d.T - this.floor(side))));
 
   // the lowest value on graph `side` (1 or 2)
@@ -167,7 +207,7 @@ let Dash = class {
       lgi.append(`<span>${i[0]}</span>`);
       lgi.on('click', (e) => {
         this.normdata.filter(d => d.color === i[1]).map(d => d.show = !d.show);
-        this.drawData();
+        this.update();
       });
       lg.append(lgi);
     }
@@ -179,7 +219,7 @@ let Bar = class {
 
   constructor(barID) {
 
-    // set to the Graph object to which this Bar belongs
+    // set to the Dash object to which this Bar belongs
     this.parent;
 
     this.obar = $(`#${barID}`);
@@ -193,7 +233,7 @@ let Bar = class {
     this.ibar.css({
       'height': `${this.obar.css('height')}`,
       'position': 'absolute',
-      'background': '#ddd'
+      'background': '#ddd',
     });
 
     this.dib = document.getElementById(`${barID}-ibar`);
@@ -233,6 +273,7 @@ let Graph = class {
 
   constructor(graphID) {
     this.parent;
+    this.ownSide;
     this.id = graphID;
 
     this.div = $(`#${graphID}`);
@@ -246,8 +287,18 @@ let Graph = class {
 
     // create internal <canvas> object
     this.cvs = $(`#${graphID} #${graphID}-cvs`);
-    this.cvs.on('mousemove', (e) => this.parent.drawData(e.offsetX, e.offsetY));
-    this.cvs.on('mouseleave', () => this.parent.drawData());
+    this.cvs.on('mousemove', (e) => {
+      this.parent.mouseIn = this.ownSide;
+      this.parent.cx = e.offsetX;
+      this.parent.cy = e.offsetY;
+      this.parent.update();
+    });
+    this.cvs.on('mouseleave', () => {
+      this.parent.mouseIn = false;
+      this.parent.cx = -1;
+      this.parent.cy = -1;
+      this.parent.update();
+    });
 
     // obtain the new canvas's context
     this.ctx = this.cvs[0].getContext('2d');
@@ -256,8 +307,9 @@ let Graph = class {
   // plot a dataset
   draw(ds) {
     if (ds.show) {
-      this.ctx.strokeStyle = ds.color;
       this.ctx.beginPath();
+      this.ctx.strokeStyle = ds.color;
+      this.ctx.lineWidth = 3;
       this.ctx.moveTo(ds.x[0], this.ch - ds.y[0]);
 
       for (let p = 1; p < ds.n; p++) this.ctx.lineTo(ds.x[p], this.ch - ds.y[p]);
@@ -272,9 +324,44 @@ let Graph = class {
 
   crosshair(x, y) {
     this.ctx.beginPath();
+    this.ctx.strokeStyle = '#A0A0A0';
+    this.ctx.lineWidth = 1;
     this.ctx.moveTo(0, y); this.ctx.lineTo(this.cw, y);
     this.ctx.moveTo(x, 0); this.ctx.lineTo(x, this.ch);
     this.ctx.stroke();
+  }
+
+  label(lbl) {
+    let lh = 20, width;
+    this.ctx.save();
+    this.ctx.font = 'normal 18px Serif';
+
+    // line from crosshair to point on dataset
+    this.ctx.beginPath();
+    this.ctx.moveTo(lbl.p.x0, lbl.p.y0);
+    this.ctx.lineTo(lbl.p.x1, lbl.p.y1);
+    this.ctx.stroke();
+
+    // dot on point on dataset
+    this.ctx.beginPath();
+    this.ctx.fillStyle = lbl.color;
+    this.ctx.arc(lbl.p.x0, lbl.p.y0, 6, 0, 2*Math.PI, true);
+    this.ctx.fill();
+
+    // 'name' label
+    width = this.ctx.measureText(lbl.name).width;
+    this.ctx.fillStyle = '#f0f0f0';
+    this.ctx.fillRect(lbl.p.x1, lbl.p.y1 - 2*lh, width, lh);
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillText(lbl.name, lbl.p.x1, lbl.p.y1-lh-5);
+
+    // 'value' label
+    width = this.ctx.measureText(lbl.value).width;
+    this.ctx.fillStyle = '#f0f0f0';
+    this.ctx.fillRect(lbl.p.x1, lbl.p.y1 - lh, width, lh);
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillText(lbl.value, lbl.p.x1, lbl.p.y1-5);
+    this.ctx.restore();
   }
 
   // draw the grid
@@ -284,9 +371,8 @@ let Graph = class {
     let yGrain = 8;
 
     this.ctx.strokeStyle = '#D0D0D0';
-    this.ctx.strokeWidth = 1;
+    this.ctx.lineWidth = 1;
     this.ctx.font = 'bold 16px monospace';
-    this.ctx.fillStyle = 'grey';
 
     let dx = Math.floor(this.cw / xlbl.length);
 
@@ -320,6 +406,11 @@ let Graph = class {
 }
 
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const intCeil = (x) => {
+  let p = Math.floor(Math.log10(x)) - 1;
+  return Math.ceil( x / (10**p) ) * 10**p;
+}
 
 // random integer in the range [min, max)
 const randInt = (min, max) => min + Math.floor((Math.random() * (max - min)));
