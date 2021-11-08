@@ -27,56 +27,68 @@ let Dash = class {
   constructor(divID, vw, title1, title2) {
 
     let p = 10;                              // padding
-    let gw = (vw - p)/2;                     // graph width
+    let leg = 60;                            // legend width
+    let gw = (vw - p)/2 - (2 * leg);         // graph width
     let gh = Math.min(0.75 * gw, 600);       // graph height
 
     this.container = $(`#${divID}`);
     this.container.css({
       'font-size': '16px',
-      'width': '100%',
+      'width': `${vw}px`,
       'margin-top': '20px',
       'position': 'relative',
-      'display': 'grid',
+      'display': 'grid',    
       'grid-template-rows': `${3*p}px ${3*p}px ${gh}px ${3*p}px ${3*p}px ${3*p}px`,
-      'grid-template-columns': `${gw}px ${gw}px`,
-      'grid-gap': `${p}px`,
+      'grid-template-columns': `0.5fr ${leg}px ${gw}px ${leg}px ${gw}px 1fr`,
       'user-select': 'none'
     });
 
-    this.container.append(`<span id='${divID}-title1' style='grid-row: 2; grid-column: 1'>${title1}</span>`);
-    this.container.append(`<span id='${divID}-title2' style='grid-row: 2; grid-column: 2'>${title2}</span>`);
-    this.container.append(`<div id='${divID}lg' style='grid-row: 3; grid-column: 1'></div>`);
-    this.container.append(`<div id='${divID}rg' style='grid-row: 3; grid-column: 2'></div>`);
-    this.container.append(`<div id='${divID}b' style='grid-row: 5; grid-column: 1 / 3'></div>`);
+    this.container.append(`<span id='${divID}-title1' style='grid-row: 2; grid-column: 3'>${title1}</span>`);
+    this.container.append(`<span id='${divID}-title2' style='grid-row: 2; grid-column: 5'>${title2}</span>`);
+    this.container.append(`<div id='${divID}lg' style='grid-row: 3; grid-column: 3'></div>`);
+    this.container.append(`<div id='${divID}ly' style='grid-row: 3; grid-column: 2'></div>`);
+    this.container.append(`<div id='${divID}lx' style='grid-row: 4; grid-column: 3'></div>`);
+    this.container.append(`<div id='${divID}rg' style='grid-row: 3; grid-column: 5'></div>`);
+    this.container.append(`<div id='${divID}ry' style='grid-row: 3; grid-column: 4'></div>`);
+    this.container.append(`<div id='${divID}rx' style='grid-row: 4; grid-column: 5'></div>`);
+    this.container.append(`<div id='${divID}b' style='grid-row: 6; grid-column: 3 / 6'></div>`);
 
     $(`#${divID} span`).css({
       'font-weight': 'bold',
       'align-self': 'end', 
       'pointer-events': 'none'
     });
-    $(`#${divID} #${divID}lg`).css({
-      'width': `${gw}px`, 'height': `${gh}px`,
-      'overflow': 'hidden',
-      'cursor': 'none'
-    });
-    $(`#${divID} #${divID}rg`).css({
-      'width': `${gw}px`, 'height': `${gh}px`,
-      'overflow': 'hidden',
-      'cursor': 'none'
-    });
-    $(`#${divID} #${divID}b`).css({
-      'width': '100%', 'height': `${3 * p}px`,
-      'overflow': 'hidden',
+    $(`#${divID} #${divID}lg`).css({ 'width': `${gw}px`, 'height': `${gh}px`, 'cursor': 'none' });
+    $(`#${divID} #${divID}ly`).css({ 'width': `${leg}px`, 'height': `${gh}px`, });
+    $(`#${divID} #${divID}lx`).css({ 'width': `${gw}px`, 'height': `${3*p}px`, });
+    $(`#${divID} #${divID}rg`).css({ 'width': `${gw}px`, 'height': `${gh}px`, 'cursor': 'none' });
+    $(`#${divID} #${divID}ry`).css({ 'width': `${leg}px`, 'height': `${gh}px`, });
+    $(`#${divID} #${divID}rx`).css({ 'width': `${gw}px`, 'height': `${3*p}px`, });
+    $(`#${divID} #${divID}b`).css({ 
+      'width': '100%', 'height': `${3 * p}px`, 
+      'border': '1px solid gray',
+      'border-radius': `${1.5*p}px`
     });
     $(`#${divID} div`).css({'position': 'absolute', 'scrollbar-width': 'none'});
     $(`#${divID} div::-webkit-scrollbar`).css('display', 'none');
 
     this.LG = new Graph(`${divID}lg`);
-    this.RG = new Graph(`${divID}rg`);
-    this.B  = new Bar(`${divID}b`);
-
     this.LG.parent = this; this.LG.ownSide = 1;
+
+    this.LG.Y = new Graph(`${divID}ly`);
+    this.LG.X = new Graph(`${divID}lx`);
+    this.LG.Y.parent = this; this.LG.Y.ownSide = false;
+    this.LG.X.parent = this; this.LG.X.ownSide = false;
+
+    this.RG = new Graph(`${divID}rg`);
     this.RG.parent = this; this.RG.ownSide = 2;
+
+    this.RG.Y = new Graph(`${divID}ry`);
+    this.RG.X = new Graph(`${divID}rx`);
+    this.RG.Y.parent = this; this.RG.Y.ownSide = false;
+    this.RG.X.parent = this; this.RG.X.ownSide = false;
+
+    this.B  = new Bar(`${divID}b`);
     this.B.parent = this;
 
     this.data = [];
@@ -124,18 +136,15 @@ let Dash = class {
 
   update() {
     this.clear();
-    let f1 = this.floor(1), h1 = this.dataHeight(1), 
-        f2 = this.floor(2), h2 = this.dataHeight(2);
-
-    this.LG.grid(this.xlbl, this.xoff, f1, f1 + h1, Math.abs(f1 * this.ch / h1)); 
-    this.RG.grid(this.xlbl, this.xoff, f2, f2 + h2, Math.abs(f2 * this.ch / h2)); 
+    this.LG.grid(); 
+    this.RG.grid(); 
 
     for (let ds of this.normdata) {
       if (ds.side === 1) this.LG.draw(ds);
       if (ds.side === 2) this.RG.draw(ds);
     }
 
-    if (this.cx >= 0 && this.cy >= 0) {
+    if (this.mouseIn && this.cx >= 0 && this.cy >= 0) {
       this.LG.crosshair(this.cx, this.cy);
       this.RG.crosshair(this.cx, this.cy);
 
@@ -152,12 +161,10 @@ let Dash = class {
           }
         }
       }
-
       if (m < 50) {
         let d = this.data[di], nd = this.normdata[di];
         let lbl = { 
-          name: d.name, 
-          date: null, 
+          name: d.name, date: null, 
           value: d.y[dj].toLocaleString('en-US'), 
           color: d.color,
           p: { 
@@ -165,7 +172,6 @@ let Dash = class {
             x1: this.cx, y1: this.cy
           } 
         }
-
         if (this.mouseIn == 1) { this.LG.label(lbl); }
         if (this.mouseIn == 2) { this.RG.label(lbl); }
       }
@@ -177,8 +183,8 @@ let Dash = class {
   // scroll both graphs; `a` expected to be in the range [0, 1]
   scroll(a) {
     this.xoff = a * (this.cw - this.ow);
-    this.LG.div.scrollLeft(this.xoff);
-    this.RG.div.scrollLeft(this.xoff);
+    this.LG.scroll(this.xoff); 
+    this.RG.scroll(this.xoff); 
     this.update();
   }
 
@@ -186,12 +192,12 @@ let Dash = class {
   dataWidth = () => Math.ceil(Math.max(... this.data.map(d => d.R - d.L)));
 
   // the height of the tallest dataset on `side` (1 or 2)
-  dataHeight = (side) => intCeil(1.1*Math.max(... 
+  dataHeight = (side) => intCeil(Math.max(... 
     this.data.filter(d => d.side === side).map(d => d.T - this.floor(side))));
 
   // the lowest value on graph `side` (1 or 2)
   floor = (side) => Math.floor(Math.min(0, ... 
-    this.data.filter(d => d.side === side).map(d => d.B)));
+    this.data.filter(d => d.side === side).map(d => 1.1*d.B)));
 
   // empty all visuals from graphs
   clear() {
@@ -200,72 +206,20 @@ let Dash = class {
   }
 
   legend(L) {
-    let lg = $(`<span style='grid-row: 1; grid-column: 1 / 3'></span>`);
+    let lg = $(`<span style='grid-row: 1; grid-column: 3 / 6'></span>`);
     for (let i of L) { 
-      let lgi = $(`<span></span>`);
+      let lgi = $(`<span style='padding: 0 5px'></span>`);
       lgi.append(`<span class='legend-dot' style='background-color:${i[1]}'></span>`);
       lgi.append(`<span>${i[0]}</span>`);
       lgi.on('click', (e) => {
+        // $(e.target).parent().toggleClass('sr');
         this.normdata.filter(d => d.color === i[1]).map(d => d.show = !d.show);
         this.update();
       });
       lg.append(lgi);
     }
     this.container.append(lg);
-  }
-}
-
-let Bar = class {
-
-  constructor(barID) {
-
-    // set to the Dash object to which this Bar belongs
-    this.parent;
-
-    this.obar = $(`#${barID}`);
-    this.ow = parseInt(this.obar.css('width'));
-    this.iw;
-
-    // create and append inner (draggable) bar
-    this.obar.append(`<div id='${barID}-ibar'></div>`);
-    this.obar.css('background-color', '#bbb')
-    this.ibar = $(`#${barID}-ibar`);
-    this.ibar.css({
-      'height': `${this.obar.css('height')}`,
-      'position': 'absolute',
-      'background': '#ddd',
-    });
-
-    this.dib = document.getElementById(`${barID}-ibar`);
-    this.dib.onmousedown = this.startDrag;
-    this.x0, this.x;
-  }
-
-  setWidth = () => {
-    this.iw = this.parent.xvis * this.ow;
-    this.ibar.css('width', `${this.iw}px`);
-  }
-
-  startDrag = (e) => {
-    this.x0 = e.clientX;
-    document.onmouseup = this.stopDrag;
-    document.onmousemove = this.doDrag;
-  }
-
-  doDrag = (e) => {
-    this.x = this.x0 - e.clientX;
-    this.x0 = e.clientX;
-    let d = this.dib.offsetLeft - this.x;
-    if (d >= 0 && d + this.iw <= this.ow) {
-      this.dib.style.left = this.dib.offsetLeft - this.x + "px"
-      // parameter has range 0 to 1; mapped to appropriate scroll value in parent.scroll
-      this.parent.scroll(this.dib.offsetLeft / (this.ow - this.iw));
-    }
-  }
-
-  stopDrag = (e) => {
-    document.onmouseup = null;
-    document.onmousemove = null;
+    
   }
 }
 
@@ -273,6 +227,7 @@ let Graph = class {
 
   constructor(graphID) {
     this.parent;
+    this.Y; this.X;
     this.ownSide;
     this.id = graphID;
 
@@ -300,7 +255,6 @@ let Graph = class {
       this.parent.update();
     });
 
-    // obtain the new canvas's context
     this.ctx = this.cvs[0].getContext('2d');
   }
 
@@ -311,16 +265,28 @@ let Graph = class {
       this.ctx.strokeStyle = ds.color;
       this.ctx.lineWidth = 3;
       this.ctx.moveTo(ds.x[0], this.ch - ds.y[0]);
-
       for (let p = 1; p < ds.n; p++) this.ctx.lineTo(ds.x[p], this.ch - ds.y[p]);
-
       this.ctx.stroke();
     }
   }
 
-  setw(w) { this.cw = w; this.cvs.attr('width', w); }
+  setw(w) { 
+    this.cw = w; 
+    this.X.cw = w;
+    this.cvs.attr('width', w); 
+    this.X.cvs.attr('width', w);
+  }
 
-  clear() { this.ctx.clearRect(0, 0, this.cw, this.ch); }
+  clear() { 
+    this.ctx.clearRect(0, 0, this.cw, this.ch); 
+    this.Y.ctx.clearRect(0, 0, this.Y.cw, this.Y.ch);
+    this.X.ctx.clearRect(0, 0, this.X.cw, this.X.ch);
+  }
+
+  scroll(x) {
+    this.div.scrollLeft(x);
+    this.X.div.scrollLeft(x);
+  }
 
   crosshair(x, y) {
     this.ctx.beginPath();
@@ -364,36 +330,45 @@ let Graph = class {
     this.ctx.restore();
   }
 
-  // draw the grid
-  grid(xlbl, xoff, ymin, ymax, zero) {
+  grid() {
 
-    // number of horizontal gridlines
     let yGrain = 8;
+
+    let ymin = this.parent.floor(this.ownSide);
+    let ymax = ymin + this.parent.dataHeight(this.ownSide);
+    let zero = Math.abs( ymin * this.parent.ch / (ymax-ymin));
 
     this.ctx.strokeStyle = '#D0D0D0';
     this.ctx.lineWidth = 1;
-    this.ctx.font = 'bold 16px monospace';
+    this.Y.ctx.font = 'bold 16px monospace';
+    this.X.ctx.font = 'bold 16px monospace';
+    this.X.ctx.strokeStyle = '#D0D0D0';
+    this.X.ctx.lineWidth = 1;
 
-    let dx = Math.floor(this.cw / xlbl.length);
+    let dx = Math.floor(this.cw / this.parent.xlbl.length);
 
     let ylbl = [], lat;
-    for (let i = ymin; i < ymax; i += (ymax - ymin) / yGrain) ylbl.push(Math.floor(i));
-    for (let i = 1; i < yGrain; i++) {
+    for (let i = ymin; i < ymax; i += (ymax - ymin) / yGrain) ylbl.push(science(i));
+    for (let i = 0; i < yGrain; i++) {
       lat = this.ch * (1 - i / yGrain);
       this.ctx.beginPath();
       this.ctx.moveTo(0, lat);
       this.ctx.lineTo(this.cw, lat)
       this.ctx.stroke();
-      this.ctx.fillStyle = 'black';
-      this.ctx.fillText(ylbl[i], xoff, lat);
+      this.Y.ctx.fillStyle = 'black';
+      this.Y.ctx.fillText(ylbl[i], this.Y.cw - 5 - this.Y.ctx.measureText(ylbl[i]).width, lat);
     }
 
-    for (let i in xlbl) {
+    for (let i in this.parent.xlbl) {
       this.ctx.beginPath();
       this.ctx.moveTo(i * dx, 0);
       this.ctx.lineTo(i * dx, this.ch);
       this.ctx.stroke();
-      this.ctx.fillText(xlbl[i], i * dx, this.ch - 10);
+      this.X.ctx.beginPath();
+      this.X.ctx.moveTo(i * dx, 0);
+      this.X.ctx.lineTo(i * dx, this.X.ch);
+      this.X.ctx.stroke();
+      this.X.ctx.fillText(this.parent.xlbl[i], i * dx + 5, this.X.ch-10);
     }
 
     // draw a dark line at zero
@@ -405,11 +380,76 @@ let Graph = class {
   }
 }
 
+let Bar = class {
+
+  constructor(barID) {
+
+    this.parent;
+
+    this.obar = $(`#${barID}`);
+    this.obar.css('overflow', 'hidden');
+    this.ow = parseInt(this.obar.css('width'));
+    this.iw;
+
+    // create and append inner (draggable) bar
+    this.obar.append(`<div id='${barID}-ibar'></div>`);
+    this.obar.css('background-color', '#bbb')
+    this.ibar = $(`#${barID}-ibar`);
+    this.ibar.css({
+      'height': `${this.obar.css('height')}`,
+      'position': 'absolute',
+      'background': '#ddd',
+      'transition': 'background 0.25s'
+    });
+
+    this.dib = document.getElementById(`${barID}-ibar`);
+    this.dib.onmousedown = this.startDrag;
+    this.x0, this.x;
+  }
+
+  setWidth = () => {
+    this.iw = this.parent.xvis * this.ow;
+    this.ibar.css('width', `${this.iw}px`);
+  }
+
+  startDrag = (e) => {
+    this.x0 = e.clientX;
+    document.onmouseup = this.stopDrag;
+    document.onmousemove = this.doDrag;
+    this.ibar.css('background', '#d0d0d0');
+  }
+
+  doDrag = (e) => {
+    this.x = this.x0 - e.clientX;
+    this.x0 = e.clientX;
+    let d = this.dib.offsetLeft - this.x;
+    if (d >= 0 && d + this.iw <= this.ow) {
+      this.dib.style.left = this.dib.offsetLeft - this.x + "px"
+      // parameter has range 0 to 1; mapped to appropriate scroll value in parent.scroll
+      this.parent.scroll(this.dib.offsetLeft / (this.ow - this.iw));
+    }
+  }
+
+  stopDrag = (e) => {
+    document.onmouseup = null;
+    document.onmousemove = null;
+    this.ibar.css('background', '#ddd');
+  }
+}
+
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const intCeil = (x) => {
   let p = Math.floor(Math.log10(x)) - 1;
   return Math.ceil( x / (10**p) ) * 10**p;
+}
+
+let unit = ['', 'K', 'M', 'B', 'T'];
+const science = (x) => {
+  if (x > 999) {
+    let p = Math.floor(Math.log10(x));
+    return `${ Math.floor( x / (10**(p - p % 3)) )}${ unit[Math.floor(p / 3)] }`;
+  } else return Math.floor(x);
 }
 
 // random integer in the range [min, max)
