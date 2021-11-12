@@ -102,7 +102,7 @@
 
     let colors = ['rgb(31, 119, 180)', 'rgb(255, 127, 14)', 'rgb(148, 103, 189)', 'rgb(140, 86, 75)', 'rgb(188, 189, 34)']
 
-    db = new Dash('dash', $('main').width(), `{{ feature1 }}`, `{{ feature2 }}`);
+    db = new Dash('dash', $('#main-content').width(), `{{ feature1 }}`, `{{ feature2 }}`);
 
     // this assumes that all datasets cover the same time range (they will all be plotted
     // left-aligned with the horizontally 'widest' dataset)
