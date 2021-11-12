@@ -29,8 +29,11 @@ import timeit
 
 # to lock threads to one at a time
 import threading
-reader_lock = threading.Lock()
-generator_lock = threading.Lock()
+csv_rewriter_lock = threading.Lock()
+csv_generator_lock = threading.Lock()
+map_generator_lock_lock = threading.Lock()
+map_generator_unlock_lock = threading.Lock()
+map_generator_locks = dict()
 
 class map_test() :
   # Constructor
@@ -105,7 +108,7 @@ class map_test() :
 
     # Initialize the hash tables for
     #   the CSV files
-    csvHash = self.initCSVHash()
+    csvHash = self.initCSVHash()  # this is causing problems because it is not shared between threads
 
     # End timer 
     elapsed = timeit.default_timer() - start_time
@@ -115,23 +118,22 @@ class map_test() :
       #print( "map key: %s does exist" % key )
       #fName = './v2/static/maps/' + subName + '/' + self.mapHash[key]
     #else :
-      #if csvHash.get( key ) == None :
-      while self.mapHash.get ( key ) == None :
+      if csvHash.get( key ) == None :
+      # while self.mapHash.get ( key ) == None :
         # Rewrite the configuration file with the csv information
         #   we want to read in
-        with generator_lock:
+        
+        global csv_generator_lock
+        print('about to enter csv_generator_lock')
+        with csv_generator_lock :
+
           # Maybe we should escape the loop
-          with open('./debug/lock.txt', 'r') as f:
-            f.read()
-          with open('./debug/lock.txt', 'a') as f:
-            f.write('\n' + f'Maphash {self.mapHash}' + '\n')
-          if key not in self.mapHash:
+          #print(f'csvHash (dict): {csvHash}')
+          csvHash = self.initCSVHash()  # refreh csvHash inside the critical section
+          if key not in csvHash:
           
             ## print a statement that we are entering the critical section to a debug file /debug/lock.txt
-            with open('./debug/lock.txt', 'r') as f:
-              f.read()
-            with open('./debug/lock.txt', 'a') as f:
-              f.write('\n' + f'Entering critical section for key {key}' + '\n')
+            print(f'Running csv_generator for key {key}')
             with open( 'cowiz/usmap/csvLayers/Covid19Period.conf', 'r' ) as fp :
               allLines = fp.readlines()
             fp.close()
@@ -148,16 +150,28 @@ class map_test() :
               fp.writelines(allLines)
             fp.close()
 
-            subprocess.call(["cowiz/usmap/csvLayers/csvGenerator"])
+            subprocess.call(["cowiz/usmap/csvLayers/csvGenerator"], 
+              stdout=open(os.devnull, 'w'))
             #print( "csv key: %s doesn't exist" % key ) 
             #print( "map key: %s doesn't exist" % key )
+
+        # obtain a unique lock for each unique parameter combination
+        # to allow threads for different requests to render concurrently
+        # but for the same parameter combination to wait for the other
+        global map_generator_locks, map_generator_lock_lock, map_generator_unlock_lock
+        print('about to enter map_generator_lock_lock')
+        with map_generator_lock_lock :
+          if key not in map_generator_locks :
+            map_generator_locks[key] = threading.Lock()
+          print(f'about to enter map_generator_locks[{key}]')
+          with map_generator_locks[key] :
 
             # Creates a file path for where to store the map html files
             mapPath = 'cowiz/static/maps/'+ subName
             # mapPath will become the location of the HTML generated map
             # previously 'usmap/static/maps/'+ subName
           
-            print(f"\nstarting to generate map {subName} @ T={time.time_ns()}")
+            print(f"starting to generate map {subName} @ T={time.time_ns()}")
             # Checks if a directory for the map data set exists
             # If not, then we create one
             if not os.path.isdir( mapPath ) :
@@ -183,24 +197,12 @@ class map_test() :
             else :
               self.mapHash[key] = ( fName + '.html' )
 
-            with open('./debug/lock.txt', 'r') as f:
-              f.read()
-            with open('./debug/lock.txt', 'a') as f:
-              f.write('\n' + f'inserted into mapHash' + '\n')
+            print(f'inserted into mapHash')
 
             print(f"finished generating map {subName} @ T={time.time_ns()}")
             # in the critical section
-            with open('./debug/lock.txt', 'r') as f:
-              f.read()
-            with open('./debug/lock.txt', 'a') as f:
-              f.write('\n' + f'Leaving critical section for key {key}' + '\n')
-          else:
-            break
-          # not in critical section
-
-
-      else :
-        pass
+            print(f'Leaving critical section for key {key}')
+          # TODO: remove the lock for this key from `map_generator_locks` dictionary
     else :
       pass
 
@@ -213,7 +215,6 @@ class map_test() :
   def generateMap( self, dirName, fName ) :
     """
     TODO: Create a way to parse a folder from filename
-
     """
     path = ( 'cowiz/usmap/csvLayers/'+ dirName +
              '/' + fName + '.csv' )
@@ -396,7 +397,8 @@ class map_test() :
           
             fp.close()
 
-    with reader_lock:
+    global csv_rewriter_lock
+    with csv_rewriter_lock:
       with open( 'cowiz/usmap/maptest/tables/csv_table.txt', 'r' ) as fp :
         lines = fp.read().replace( '\r', '' ).split( '\n' )
 
