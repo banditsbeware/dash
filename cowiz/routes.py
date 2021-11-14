@@ -62,6 +62,7 @@ def graph(locale):
   return render_template("graph.html",
     who      = who(),
     locale   = locale,
+    death    = G.death(locale),
     regions  = G.load_regions(locale),
     features = G.load_features(locale)
   )
@@ -70,14 +71,21 @@ from json import dumps
 @app.route("/graph/results/<locale>", methods=['POST'])
 def animate(locale):
 
+  ipt = request.form
+
+  user_regions = [ field for field in ipt if field not in ['feature1', 'feature2'] ]
+
   features = G.load_features(locale)
+  user_f1 = features[ int(ipt['feature1']) ]
+  user_f2 = features[ int(ipt['feature2']) ]
 
   return render_template("graph.html", 
     who      = who(),
     locale   = locale,
+    death    = G.death(locale),
     regions  = G.load_regions(locale),
-    features = G.load_features(locale),
-    data     = dumps(G.graph_data(locale)),
-    feature1 = features[ int(request.form['feature1']) ],
-    feature2 = features[ int(request.form['feature2']) ]
+    features = features,
+    feature1 = features[user_f1],
+    feature2 = features[user_f2],
+    data     = dumps(G.get_curves(locale, user_regions, user_f1, user_f2)),
   )

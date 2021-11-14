@@ -51,18 +51,10 @@ def get_curves(locale, regions, f1, f2):
 
   return C
 
-# read input form and return data to be graphed
-def graph_data(locale):
 
-  selected_regions = list()
-
-  if request.method == "POST":
-    ipt = request.form
-
-    for field in ipt:
-      if field not in ['feature1', 'feature2']: selected_regions.append(ipt[field])
-
-    feature1 = int(ipt['feature1'])
-    feature2 = int(ipt['feature2'])
-
-  return get_curves(locale, selected_regions, feature1, feature2)    
+# return cumulative cases and deaths for all regions in locale:
+# this was accomplished in the old version by reading a file called
+# "CDC-all-states.csv", which i can't for the life of me locate or
+# figure out how to obtain.
+def death(locale):
+  return {}

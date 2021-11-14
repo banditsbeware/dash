@@ -40,6 +40,8 @@
   // keeps the dropdown menu open after the user clicks an item
   $(document).on('click', '.allow-focus', function (e) { e.stopPropagation(); });
 
+  var quickDeath = JSON.parse(`{{ death|safe }}`);
+
   // called each time a list item is clicked
   const countRegions = () => {
     let chkd = $('input.region:checked');
