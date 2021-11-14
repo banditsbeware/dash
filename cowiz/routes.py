@@ -76,8 +76,8 @@ def animate(locale):
   user_regions = [ field for field in ipt if field not in ['feature1', 'feature2'] ]
 
   features = G.load_features(locale)
-  user_f1 = features[ int(ipt['feature1']) ]
-  user_f2 = features[ int(ipt['feature2']) ]
+  user_f1 = int(ipt['feature1'])
+  user_f2 = int(ipt['feature2'])
 
   return render_template("graph.html", 
     who      = who(),
