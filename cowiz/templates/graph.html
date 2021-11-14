@@ -95,12 +95,12 @@
 <!-- this script unpacks data from the server, builds the Graph object, and graphs the data -->
 <script type='text/javascript'>
 
-  let data = JSON.parse('{{ data|safe }}');
+  var colors = ['rgb(31, 119, 180)', 'rgb(255, 127, 14)', 'rgb(148, 103, 189)', 'rgb(140, 86, 75)', 'rgb(188, 189, 34)']
+
+  var data = JSON.parse('{{ data|safe }}');
   var db;
  
   function makeGraph() {
-
-    let colors = ['rgb(31, 119, 180)', 'rgb(255, 127, 14)', 'rgb(148, 103, 189)', 'rgb(140, 86, 75)', 'rgb(188, 189, 34)']
 
     db = new Dash('dash', $('#main-content').width(), `{{ feature1 }}`, `{{ feature2 }}`);
 

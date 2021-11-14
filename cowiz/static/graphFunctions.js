@@ -31,6 +31,10 @@ let Dash = class {
     let gw = (vw - p)/2 - (2 * leg);         // graph width
     let gh = Math.min(0.75 * gw, 600);       // graph height
 
+    this.id = divID;
+    this.f1 = title1;
+    this.f2 = title2;
+
     this.container = $(`#${divID}`);
     this.container.css({
       'font-size': '16px',
@@ -43,8 +47,8 @@ let Dash = class {
       'user-select': 'none'
     });
 
-    this.container.append(`<span id='${divID}-title1' style='grid-row: 2; grid-column: 3'>${title1}</span>`);
-    this.container.append(`<span id='${divID}-title2' style='grid-row: 2; grid-column: 5'>${title2}</span>`);
+    this.container.append(`<span id='${divID}-title1' style='grid-row: 2; grid-column: 3'>${this.f1}</span>`);
+    this.container.append(`<span id='${divID}-title2' style='grid-row: 2; grid-column: 5'>${this.f2}</span>`);
     this.container.append(`<div id='${divID}lg' style='grid-row: 3; grid-column: 3'></div>`);
     this.container.append(`<div id='${divID}ly' style='grid-row: 3; grid-column: 2'></div>`);
     this.container.append(`<div id='${divID}lx' style='grid-row: 4; grid-column: 3'></div>`);
@@ -53,11 +57,7 @@ let Dash = class {
     this.container.append(`<div id='${divID}rx' style='grid-row: 4; grid-column: 5'></div>`);
     this.container.append(`<div id='${divID}b' style='grid-row: 6; grid-column: 3 / 6'></div>`);
 
-    $(`#${divID} span`).css({
-      'font-weight': 'bold',
-      'align-self': 'end', 
-      'pointer-events': 'none'
-    });
+    $(`#${divID} span`).css({ 'font-weight': 'bold', 'align-self': 'end', 'pointer-events': 'none' });
     $(`#${divID} #${divID}lg`).css({ 'width': `${gw}px`, 'height': `${gh}px`, 'cursor': 'none' });
     $(`#${divID} #${divID}ly`).css({ 'width': `${leg}px`, 'height': `${gh}px`, });
     $(`#${divID} #${divID}lx`).css({ 'width': `${gw}px`, 'height': `${3*p}px`, });
@@ -74,14 +74,14 @@ let Dash = class {
 
     this.LG = new Graph(`${divID}lg`);
     this.LG.parent = this; this.LG.ownSide = 1;
+    this.RG = new Graph(`${divID}rg`);
+    this.RG.parent = this; this.RG.ownSide = 2;
 
+    // the axis labels are Graphs, but they are... special
     this.LG.Y = new Graph(`${divID}ly`);
     this.LG.X = new Graph(`${divID}lx`);
     this.LG.Y.parent = this; this.LG.Y.ownSide = false;
     this.LG.X.parent = this; this.LG.X.ownSide = false;
-
-    this.RG = new Graph(`${divID}rg`);
-    this.RG.parent = this; this.RG.ownSide = 2;
 
     this.RG.Y = new Graph(`${divID}ry`);
     this.RG.X = new Graph(`${divID}rx`);
@@ -104,7 +104,6 @@ let Dash = class {
     this.cy = -1;
 
     this.mouseIn = false;
-
   }
 
   // push a dataset onto the dashboard
@@ -129,6 +128,14 @@ let Dash = class {
       let normy = d.y.map( y => Math.floor(this.ch * (y - f) / h));
       this.normdata.push( DataSet( d.x, normy, d.side, d.name, d.color ) );
     }
+
+    this.writeDataRangeInTheTitleOfEachGraph();
+  }
+
+  // i guess the numbers along the y-axis aren't clear enough
+  writeDataRangeInTheTitleOfEachGraph() {
+    $(`#${this.id}-title1`).text(`${this.f1} (${this.floor(1)} - ${science(this.dataHeight(1))})`);
+    $(`#${this.id}-title2`).text(`${this.f2} (${this.floor(2)} - ${science(this.dataHeight(2))})`);
   }
 
   set xlbl(x) { this._xlbl = x };
@@ -448,9 +455,11 @@ let unit = ['', 'K', 'M', 'B', 'T'];
 const science = (x) => {
   if (x > 999) {
     let p = Math.floor(Math.log10(x));
-    return `${ Math.floor( x / (10**(p - p % 3)) )}${ unit[Math.floor(p / 3)] }`;
+    return `${ Math.floor( x / (10**(p - 1 - p % 3)) ) / 10 }${ unit[Math.floor(p / 3)] }`;
   } else return Math.floor(x);
 }
+
+for (let x of [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 123456789]) console.log(science(x));
 
 // random integer in the range [min, max)
 const randInt = (min, max) => min + Math.floor((Math.random() * (max - min)));
