@@ -1,7 +1,7 @@
 # dash
-Fork of ITLab Covid visualization dashboard
+The Covid data visualization dashboard is one of [UTA ITLab](https://itlab.uta.edu)'s research projects, focusing on multilayer network analysis. This web application showcases graph visualization techniques in two ways; a choropleth map shows changes in statistics across time, and a side-by-side line graph is used to compare statistics from various regions over a similar time period. 
 
-## Getting Started
+### Local development
 1. Clone this repository
 ```bash
 $ git clone https://github.com/banditsbeware/dash.git
@@ -17,8 +17,7 @@ $ pip install -r requirements.txt
 
 3. Configure
 
-3.1 The app requires a pynytimes API key in `.env`. It should look something like<br>
-`NYTAPI_KEY=_________________________________`
+3.1 The app requires a [New York Times API](https://developer.nytimes.com) key in `.env`; e.g. `NYTAPI_KEY=<api key>`
 
 3.2 Compile the `csvGenerator`:
 ```bash
