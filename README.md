@@ -1,37 +1,35 @@
 # dash
 The Covid data visualization dashboard is one of [UTA ITLab](https://itlab.uta.edu)'s research projects, focusing on multilayer network analysis. This web application showcases graph visualization techniques in two ways; a choropleth map shows changes in statistics across time, and a side-by-side line graph is used to compare statistics from various regions over a similar time period. 
 
-### Local development
-1. Clone this repository
+## Local development
+Clone this repository
 ```bash
 $ git clone https://github.com/banditsbeware/dash.git
 $ cd dash
 ```
 
-2. Create python virtual environment and install required packages: <br>
+Create python virtual environment and install required packages: <br>
 ```bash
 $ python3 -m virtualenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
-3. Configure
+The app requires a [New York Times API](https://developer.nytimes.com) key in `.env`; e.g. `NYTAPI_KEY=<api key>`
 
-3.1 The app requires a [New York Times API](https://developer.nytimes.com) key in `.env`; e.g. `NYTAPI_KEY=<api key>`
-
-3.2 Compile the `csvGenerator`:
+Compile the `csvGenerator`:
 ```bash
 $ g++ -o cowiz/usmap/csvLayers/csvGenerator cowiz/usmap/csvLayers/csvGenerator.cpp
 ```
 
-3.3 Set the development flask environment variables:
+Set the development flask environment variables:
 ```bash
 $ export FLASK_APP=cowiz
 $ export FLASK_ENV=development
 ```
 
 To skip from having to set environment variables every time you activate `venv`, add the following lines to `venv/bin/activate`:
-```
+```bash
     ...
     
     # reset old environment variables
@@ -63,5 +61,7 @@ export FLASK_ENV
 # DONE INSERTING
 ```
 
-4. Run the app!
-`$ flask run`
+Run the app:<br>
+```bash
+$ flask run
+```
