@@ -15,6 +15,13 @@ $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
+If you prefer to use anaconda, you can install the required packages with:
+```bash
+$ conda create --prefix ./env python=3.8 pip
+$ conda activate ./env
+$ pip install -r requirements.txt
+```
+
 The app requires a [New York Times API](https://developer.nytimes.com) key in `.env`; e.g. `NYTAPI_KEY=<api key>`
 
 Compile the `csvGenerator`:
