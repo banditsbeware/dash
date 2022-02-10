@@ -19,7 +19,7 @@
   .img-container img { width: 100%; margin: auto; transition: 0.15s; cursor: pointer; }
   .img-container img:hover { transform: scale(1.05); }
   p.desc { width: 75%; margin: auto; }
-  div#graph {
+  div#timeline {
     position: relative;
     margin: auto;
     cursor: pointer;
@@ -30,14 +30,14 @@
     background-position: center;
   }
 
-  div#g-links {
+  div.t-links {
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  div#g-links a {
+  div.t-links a {
     pointer-events: auto;
     border: 1px solid black;
     padding: 5px;
@@ -57,18 +57,18 @@
 <div id='container'>
   <h4 class='title'>Animated Timeline for Feature Correlation</h4>
   <h4 class='title'>Interactive Map Visualization using MLNs</h4> 
-  <div id='graph'><div id='g-links'>{% for L in locales %}<a href='/graph/{{ L }}'>{{ L }}</a>{% endfor %}</div></div>
+  <div id='timeline'><div class='t-links'>{% for L in locales %}<a href='/timeline/{{ L }}'>{{ L }}</a>{% endfor %}</div></div>
   <div class='img-container'><a href='/usmap'><img id='usmap-img' src="{{url_for('static', filename='images/usmap-preview.png')}}"></a></div>
   <p class='desc'>Compare statistics from multiple regions side by side across the same time period</p>
   <p class='desc'>Visualize regions with similar changes in confirmed cases around an event of interest</p>
 </div>
 
 <script>
-  $('#graph').hover(
+  $('#timeline').hover(
   function() {
-    $('#g-links a').show(100);
+    $('.t-links a').show(100);
   }, function() {
-    $('#g-links a').hide(100);
+    $('.t-links a').hide(100);
   });
 </script>
 {% endblock %}

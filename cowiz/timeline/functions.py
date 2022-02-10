@@ -1,7 +1,7 @@
 from flask import request
 from os.path import exists
 
-def path(locale): return f'./cowiz/static/graphdata/{locale}.csv'
+def path(locale): return f'./cowiz/static/timelinedata/{locale}.csv'
 
 # Read the set of unique regions from data file
 # Expects regions to be listed in the leftmost column

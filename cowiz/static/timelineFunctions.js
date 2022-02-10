@@ -28,7 +28,7 @@ let Dash = class {
 
     let p = 10;                              // padding
     let leg = 60;                            // legend width
-    let gw = (vw - p)/2 - (2 * leg);         // graph width
+    let gw = 0.8 * ((vw - p)/2 - (2 * leg)); // graph width
     let gh = Math.min(0.75 * gw, 600);       // graph height
 
     this.id = divID;
@@ -43,7 +43,7 @@ let Dash = class {
       'position': 'relative',
       'display': 'grid',    
       'grid-template-rows': `${3*p}px ${3*p}px ${gh}px ${3*p}px ${3*p}px ${3*p}px`,
-      'grid-template-columns': `0.5fr ${leg}px ${gw}px ${leg}px ${gw}px 1fr`,
+      'grid-template-columns': `1fr ${leg}px ${gw}px ${leg}px ${gw}px 1fr`,
       'user-select': 'none'
     });
 
@@ -88,7 +88,7 @@ let Dash = class {
     this.RG.Y.parent = this; this.RG.Y.ownSide = false;
     this.RG.X.parent = this; this.RG.X.ownSide = false;
 
-    this.B  = new Bar(`${divID}b`);
+    this.B = new Bar(`${divID}b`);
     this.B.parent = this;
 
     this.data = [];
@@ -219,7 +219,7 @@ let Dash = class {
       lgi.append(`<span class='legend-dot' style='background-color:${i[1]}'></span>`);
       lgi.append(`<span>${i[0]}</span>`);
       lgi.on('click', (e) => {
-        // $(e.target).parent().toggleClass('sr');
+        // TODO: make legend items change appearance when clicked
         this.normdata.filter(d => d.color === i[1]).map(d => d.show = !d.show);
         this.update();
       });
@@ -451,6 +451,7 @@ const intCeil = (x) => {
   return Math.ceil( x / (10**p) ) * 10**p;
 }
 
+// large number formatting
 let unit = ['', 'K', 'M', 'B', 'T'];
 const science = (x) => {
   if (x > 999) {
@@ -459,7 +460,8 @@ const science = (x) => {
   } else return Math.floor(x);
 }
 
-for (let x of [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 123456789]) console.log(science(x));
+// debug for number formatting
+// for (let x of [1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 123456789]) console.log(science(x));
 
 // random integer in the range [min, max)
 const randInt = (min, max) => min + Math.floor((Math.random() * (max - min)));

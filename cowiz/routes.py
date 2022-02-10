@@ -2,15 +2,15 @@ import os
 from flask import render_template, request
 from cowiz import app
 from cowiz.usmap import functions as U
-from cowiz.graph import functions as G
+from cowiz.timeline import functions as T
 from .article import covid_news
 from .who import who
 
 @app.route('/')
 def index(): 
-  # the names of the files in `cowiz/static/graphdata` are directly used to create
+  # the names of the files in `cowiz/static/timelinedata` are directly used to create
   # the buttons that the user sees on the homepage.
-  locales = [ L[:-4] for L in os.listdir('./cowiz/static/graphdata') if L[0] != 'F' ]
+  locales = [ L[:-4] for L in os.listdir('./cowiz/static/timelinedata') if L[0] != 'F' ]
 
   return render_template("index.html", who = who(), news = covid_news(), locales = locales)
 
@@ -57,35 +57,35 @@ def usmap():
       end        = ''
     )
 
-@app.route("/graph/<locale>")
-def graph(locale):
-  return render_template("graph.html",
+@app.route("/timeline/<locale>")
+def timeline(locale):
+  return render_template("timeline.html",
     who      = who(),
     locale   = locale,
-    death    = G.death(locale),
-    regions  = G.load_regions(locale),
-    features = G.load_features(locale)
+    death    = T.death(locale),
+    regions  = T.load_regions(locale),
+    features = T.load_features(locale)
   )
 
 from json import dumps
-@app.route("/graph/results/<locale>", methods=['POST'])
+@app.route("/timeline/results/<locale>", methods=['POST'])
 def animate(locale):
 
   ipt = request.form
 
   user_regions = [ field for field in ipt if field not in ['feature1', 'feature2'] ]
 
-  features = G.load_features(locale)
+  features = T.load_features(locale)
   user_f1 = int(ipt['feature1'])
   user_f2 = int(ipt['feature2'])
 
-  return render_template("graph.html", 
+  return render_template("timeline.html", 
     who      = who(),
     locale   = locale,
-    death    = G.death(locale),
-    regions  = G.load_regions(locale),
+    death    = T.death(locale),
+    regions  = T.load_regions(locale),
     features = features,
     feature1 = features[user_f1],
     feature2 = features[user_f2],
-    data     = dumps(G.get_curves(locale, user_regions, user_f1, user_f2)),
+    data     = dumps(T.get_curves(locale, user_regions, user_f1, user_f2)),
   )

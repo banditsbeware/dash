@@ -33,9 +33,10 @@
   #legend span { margin-right: 10px; align-self: center; }
   .legend-dot { display: inline-block; height: 12px; width: 12px; border-radius: 50%; margin: 0 5px; }
 
-  #dash { box-shadow: 3px 3px 3px 3px gray; padding: 25px 0; }
+  #dash { padding: 25px 0; }
 </style>
 
+<!-- this script controls the behavior of the regions dropdown menu -->
 <script defer>
   // keeps the dropdown menu open after the user clicks an item
   $(document).on('click', '.allow-focus', function (e) { e.stopPropagation(); });
@@ -62,9 +63,8 @@
   }
 </script>
 
-<!-- <div class="container-fluid bg-secondary"> -->
 <div class="bg-secondary" style='padding: 20px'>
-  <form class="container-fluid" action="/graph/results/{{ locale }}" method="POST" novalidate>
+  <form class="container-fluid" action="/timeline/results/{{ locale }}" method="POST" novalidate>
 
     <button class="card btn btn-light dropdown-toggle m-2" type="button" style='float:left' 
       id="regionDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> Select regions...  </button>
@@ -92,7 +92,7 @@
 
 <div id='dash'></div>
 
-<script src="{{ url_for('static', filename='graphFunctions.js') }}"></script>
+<script src="{{ url_for('static', filename='timelineFunctions.js') }}"></script>
 
 <!-- this script unpacks data from the server, builds the Graph object, and graphs the data -->
 <script type='text/javascript'>
