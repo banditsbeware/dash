@@ -24,12 +24,16 @@ let DataSet = (xarr, yarr, side, name, color) => {
 
 let Dash = class {
 
-  constructor(divID, vw, title1, title2) {
+  constructor(divID, vw, vh, title1, title2) {
 
     let p = 10;                              // padding
     let leg = 60;                            // legend width
-    let gw = 0.8 * ((vw - p)/2 - (2 * leg)); // graph width
-    let gh = Math.min(0.75 * gw, 600);       // graph height
+    let gw = ((vw - p)/2 - (2 * leg));       // graph width
+    let gh = vh - (5 * (3 * p));             // graph height
+
+    // graph size (gw x gh) is calculated assuming that vw and vh
+    // are the size of the total space available for the dashboard;
+    // space for scrollbar & legends is subtracted off
 
     this.id = divID;
     this.f1 = title1;
@@ -39,7 +43,6 @@ let Dash = class {
     this.container.css({
       'font-size': '16px',
       'width': `${vw}px`,
-      'margin-top': '20px',
       'position': 'relative',
       'display': 'grid',    
       'grid-template-rows': `${3*p}px ${3*p}px ${gh}px ${3*p}px ${3*p}px ${3*p}px`,

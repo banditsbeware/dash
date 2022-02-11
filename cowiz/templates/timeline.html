@@ -102,36 +102,44 @@
   var data = JSON.parse('{{ data|safe }}');
   var db;
  
+  // this assumes that all datasets cover the same time range (they will all be plotted
+  // left-aligned with the horizontally 'widest' dataset)
+  let xlbl = new Set();
+  for (let r in data) 
+    for (let day of data[r].t) xlbl.add(day.slice(0,7));
+  xlbl = Array(... xlbl).sort()
+    .map(m => `${monthNames[parseInt(m.slice(5))-1]} ${m.slice(0,4)}`);
+
+  // add two datasets to the dashboard per region - for features 1 & 2
+  let legend = [], datasets = [];
+  for (let r in data) {
+    let xvals = [], c = colors.pop();
+
+    // factor of 10 helps space out data (i.e. 10px wide per data point)
+    for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
+
+    // exclude string feature names from datasets
+    datasets.push(DataSet( xvals, data[r]['f1'], 1, r, c ))
+    datasets.push(DataSet( xvals, data[r]['f2'], 2, r, c ))
+
+    legend.push([r, c]);
+  }
+  
   function makeGraph() {
 
-    db = new Dash('dash', $('#main-content').width(), `{{ feature1 }}`, `{{ feature2 }}`);
+    db = new Dash('dash', 
+      $('#main-content').width(), 
+      $('#main-content').height() * 0.5, 
+      `{{ feature1 }}`, 
+      `{{ feature2 }}`
+    );
 
-    // this assumes that all datasets cover the same time range (they will all be plotted
-    // left-aligned with the horizontally 'widest' dataset)
-    let xlbl = new Set();
-    for (let r in data) 
-      for (let day of data[r].t) xlbl.add(day.slice(0,7));
-    xlbl = Array(... xlbl).sort()
-      .map(m => `${monthNames[parseInt(m.slice(5))-1]} ${m.slice(0,4)}`);
+    for (let ds of datasets) db.push(ds);
 
-    // add two datasets to the dashboard per region - for features 1 & 2
-    let legend = Array();
-    for (let r in data) {
-      let xvals = [], c = colors.pop();
-
-      // factor of 10 helps space out data (i.e. 10px wide per data point)
-      for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
-
-      // exclude string feature names from datasets
-      db.push(DataSet( xvals, data[r]['f1'], 1, r, c ));
-      db.push(DataSet( xvals, data[r]['f2'], 2, r, c ));
-
-      legend.push([r, c]);
-    }
-    
     db.xlbl = xlbl;
     db.legend(legend);
     db.scroll(0);
+
   }
 
   makeGraph();
@@ -141,5 +149,4 @@
 </script>
 
 {% endif %}
-
 {% endblock %}
