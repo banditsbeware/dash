@@ -113,14 +113,17 @@
   // add two datasets to the dashboard per region - for features 1 & 2
   let legend = [], datasets = [];
   for (let r in data) {
-    let xvals = [], c = colors.pop();
+    let xvals = [], tvals = [], c = colors.pop();
 
     // factor of 10 helps space out data (i.e. 10px wide per data point)
-    for (let i = 0; i < data[r].t.length; i++) xvals.push(10 * i);
+    for (let i = 0; i < data[r].t.length; i++) {
+      xvals.push(10 * i);
+      tvals.push(data[r].t[i]);
+    }
 
     // exclude string feature names from datasets
-    datasets.push(DataSet( xvals, data[r]['f1'], 1, r, c ))
-    datasets.push(DataSet( xvals, data[r]['f2'], 2, r, c ))
+    datasets.push(DataSet( xvals, data[r]['f1'], tvals, 1, r, c ))
+    datasets.push(DataSet( xvals, data[r]['f2'], tvals, 2, r, c ))
 
     legend.push([r, c]);
   }
@@ -129,7 +132,7 @@
 
     db = new Dash('dash', 
       $('#main-content').width(), 
-      $('#main-content').height() * 0.5, 
+      $(window).height() * 0.6, 
       `{{ feature1 }}`, 
       `{{ feature2 }}`
     );

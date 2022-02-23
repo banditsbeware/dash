@@ -1,5 +1,5 @@
 // factory function for DataSet objects
-let DataSet = (xarr, yarr, side, name, color) => {
+let DataSet = (xarr, yarr, dates, side, name, color) => {
 
   if (xarr.length !== yarr.length)
     throw 'DataSet error: x & y lists are different sizes';
@@ -15,6 +15,7 @@ let DataSet = (xarr, yarr, side, name, color) => {
     R: Math.max(...xarr), // right x
     B: Math.min(...yarr), // bottom y
     T: Math.max(...yarr), // top y
+    dates: dates,
     name: name,
     color: color,
     show: true,
@@ -129,13 +130,13 @@ let Dash = class {
     for (let d of this.data) {
       let f = this.floor(d.side), h = this.dataHeight(d.side);
       let normy = d.y.map( y => Math.floor(this.ch * (y - f) / h));
-      this.normdata.push( DataSet( d.x, normy, d.side, d.name, d.color ) );
+      this.normdata.push( DataSet( d.x, normy, d.dates, d.side, d.name, d.color ) );
     }
 
     this.writeDataRangeInTheTitleOfEachGraph();
   }
 
-  // i guess the numbers along the y-axis aren't clear enough
+  // the numbers along the y-axis aren't clear enough
   writeDataRangeInTheTitleOfEachGraph() {
     $(`#${this.id}-title1`).text(`${this.f1} (${this.floor(1)} - ${science(this.dataHeight(1))})`);
     $(`#${this.id}-title2`).text(`${this.f2} (${this.floor(2)} - ${science(this.dataHeight(2))})`);
@@ -174,7 +175,8 @@ let Dash = class {
       if (m < 50) {
         let d = this.data[di], nd = this.normdata[di];
         let lbl = { 
-          name: d.name, date: null, 
+          name: d.name, 
+          date: d.dates[dj], 
           value: d.y[dj].toLocaleString('en-US'), 
           color: d.color,
           p: { 
@@ -324,19 +326,24 @@ let Graph = class {
     this.ctx.arc(lbl.p.x0, lbl.p.y0, 6, 0, 2*Math.PI, true);
     this.ctx.fill();
 
-    // 'name' label
-    width = this.ctx.measureText(lbl.name).width;
-    this.ctx.fillStyle = '#f0f0f0';
-    this.ctx.fillRect(lbl.p.x1, lbl.p.y1 - 2*lh, width, lh);
-    this.ctx.fillStyle = 'black';
-    this.ctx.fillText(lbl.name, lbl.p.x1, lbl.p.y1-lh-5);
+    let h = this.ctx.measureText(lbl.name).actualBoundingBoxAscent + 5;
+    let H = 3 * h + 5, pushx = 0, pushy = H,
+      h1 = this.ctx.measureText(lbl.name).width,
+      h2 = this.ctx.measureText(lbl.date).width,
+      h3 = this.ctx.measureText(lbl.value).width;
+    let W = Math.max(h1, h2, h3) + 10;
 
-    // 'value' label
-    width = this.ctx.measureText(lbl.value).width;
+    if (lbl.p.x1 - this.parent.xoff + W > this.parent.ow) pushx = -W;
+    if (lbl.p.y1 - H <= 0) pushy = 0;
+
     this.ctx.fillStyle = '#f0f0f0';
-    this.ctx.fillRect(lbl.p.x1, lbl.p.y1 - lh, width, lh);
+    this.ctx.fillRect(lbl.p.x1 + pushx, lbl.p.y1 - pushy, W, H);
+
     this.ctx.fillStyle = 'black';
-    this.ctx.fillText(lbl.value, lbl.p.x1, lbl.p.y1-5);
+    this.ctx.fillText(lbl.name,  lbl.p.x1 + pushx + 5, lbl.p.y1-pushy+(1 * h));
+    this.ctx.fillText(lbl.date,  lbl.p.x1 + pushx + 5, lbl.p.y1-pushy+(2 * h));
+    this.ctx.fillText(lbl.value, lbl.p.x1 + pushx + 5, lbl.p.y1-pushy+(3 * h));
+
     this.ctx.restore();
   }
 
