@@ -1,3 +1,6 @@
+# Repository archived!
+The Cowiz dashboard is now maintained by [ITLab](https://github.com/ITLab-research/cowiz-bangkok-dashboard)'s official organization.
+
 # dash
 The Covid data visualization dashboard is one of [UTA ITLab](https://itlab.uta.edu)'s research projects, focusing on multilayer network analysis. This web application showcases graph visualization techniques in two ways; a choropleth map shows changes in statistics across time, and a side-by-side line graph is used to compare statistics from various regions over a similar time period. 
 
